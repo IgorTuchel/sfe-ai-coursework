@@ -4,6 +4,7 @@ import serviceStartup from "./config/startup.js";
 import multer from "multer";
 import { fileTypeFromBuffer } from "file-type";
 import { uploadObjectToS3 } from "./services/putObjectS3.js";
+import usersRouter from "./routes/users.js";
 
 const app = express();
 
@@ -53,8 +54,15 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 
 // END TEMP CODE
 
+app.use("/users", usersRouter);
+
 app.listen(3000, async () => {
   await serviceStartup();
 
   console.log("Server is running on http://localhost:3000");
+});
+
+app.use((err, req, res, next) => {
+  console.error("Unhandled error:", err);
+  res.status(500).send("Internal Server Error xd");
 });

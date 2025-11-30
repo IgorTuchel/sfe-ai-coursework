@@ -1,10 +1,9 @@
-import sesClient from "../config/ses.js";
-import { SendEmailCommand } from "@aws-sdk/client-ses";
+import resendClient from "../config/resend.js";
 
 const verificationTemplate = `
 Hello,
 
-Here's your verification code: {{CODE}}
+Here's your verification code: <strong>{{CODE}}</strong>
 
 Thank you!
 `;
@@ -14,7 +13,7 @@ Hello,
 
 You have requested to reset your password. Use the following link to reset it: 
 
-{{LINK}}
+<button style="padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;" href="{{LINK}}">Reset Password</button>
 
 If you did not request this, please ignore this email.
 `;
@@ -24,25 +23,15 @@ export const emailTemplates = {
   resetPassword: resetPasswrordTemplate,
 };
 
-export async function sendEmail(to, from, subject, body) {
-  const params = {
-    Destination: {
-      ToAddresses: [to],
-    },
-    Message: {
-      Body: {
-        Text: { Data: body, Charset: "UTF-8" },
-      },
-      Subject: { Data: subject },
-    },
-    Source: from,
-  };
-
-  const command = new SendEmailCommand(params);
-  try {
-    const data = await sesClient.send(command);
-    console.log("Email sent successfully:", data);
-  } catch (error) {
-    console.error("Error sending email:", error);
+export async function sendEmailWithResend(to, from, subject, htmlBody) {
+  const { data, error } = await resendClient.emails.send({
+    to: to,
+    from: from,
+    subject: subject,
+    html: htmlBody,
+  });
+  if (error) {
+    return { success: false, data: error };
   }
+  return { success: true, data: data };
 }

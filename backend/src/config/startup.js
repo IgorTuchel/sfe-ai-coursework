@@ -1,10 +1,10 @@
 import s3Client from "./s3.js";
-import sesClient from "./ses.js";
 import { ListBucketsCommand } from "@aws-sdk/client-s3";
-import { GetSendQuotaCommand } from "@aws-sdk/client-ses";
 import { colors, writeErrorLogs } from "../utils/errorWriter.js";
 import connectDB from "./db.js";
-import fs from "node:fs/promises";
+import redisClient from "./redis.js";
+import resendClient from "./resend.js";
+import cfg from "./config.js";
 
 const errorLogs = [];
 
@@ -50,19 +50,30 @@ async function serviceStartup() {
     errorLogs.push("** Failed to verify s3 connection: " + error.message);
   }
 
-  // Connect to AWS SES
-  console.log("* Verifying SES connection integrity...");
+  // connect to Resend
+  console.log("* Verifying Resend connection integrity...");
   try {
-    await sesClient.send(new GetSendQuotaCommand({}));
-    console.log(colors.green + "** SES connection verified." + colors.reset);
+    // Send a test email to verify connection - no other way to verify connection
+    const { data, error } = await resendClient.emails.send({
+      from: cfg.resendSender,
+      to: "delivered@resend.dev",
+      subject: "Test Email from Service Startup",
+      html: "<strong>This is a test email to verify Resend connection.</strong>",
+    });
+    if (error) {
+      throw new Error(error.message);
+    }
+    console.log(
+      colors.green + "** Resend connection verified. " + data.id + colors.reset
+    );
   } catch (error) {
     console.log(
       colors.red +
-        "** Failed to verify SES connection: " +
+        "** Failed to verify Resend connection: " +
         error.message +
         colors.reset
     );
-    errorLogs.push("** Failed to verify SES connection: " + error.message);
+    errorLogs.push("** Failed to verify Resend connection: " + error.message);
   }
 
   // Connect to MongoDB
@@ -83,8 +94,22 @@ async function serviceStartup() {
       colors.green + "** MongoDB connection verified." + colors.reset
     );
   }
-  // console.log("* Verifying Redis connection integrity...");
-  // console.log("** Redis connection verified.");
+
+  console.log("* Verifying Redis connection integrity...");
+  const redis = await redisClient;
+  try {
+    await redis.connect();
+    await redis.ping();
+    console.log(colors.green + "** Redis connection verified." + colors.reset);
+  } catch (error) {
+    console.log(
+      colors.red +
+        "** Failed to verify Redis connection: " +
+        error.message +
+        colors.reset
+    );
+    errorLogs.push("** Failed to verify Redis connection: " + error.message);
+  }
 
   if (errorLogs.length > 0) {
     await writeErrorLogs(
