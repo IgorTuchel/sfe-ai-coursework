@@ -11,7 +11,9 @@ import {
   NotFoundError,
   BadRequestError,
   UnauthorizedError,
+  ForbiddenError,
 } from "../middleware/errorMiddleware.js";
+import { sanitiseInputText } from "../utils/inputSantise.js";
 
 export async function handlerUpdateUser(req, res) {
   const { userID, password, mfaEnabled, username, mfaCode } = req.body;
@@ -25,48 +27,46 @@ export async function handlerUpdateUser(req, res) {
 
   if (mfaEnabled) {
     const { success, data } = await handleMFA(mfaCode, userID);
+    console.log("MFA Result:", success, data);
     if (!success) {
-      if (data.code === HTTPCodes.UNAUTHORIZED) {
-        throw new UnauthorizedError(data.message, "MFA_REQUIRED");
+      if (data.code === HTTPCodes.FORBIDDEN) {
+        throw new ForbiddenError(data.message, "MFA_REQUIRED");
       } else if (data.code === HTTPCodes.NOT_FOUND) {
         throw new NotFoundError(data.message);
       }
-      changes.mfaEnabled = !data.mfaEnabled;
     }
-
-    if (username) {
-      const cleanUsername = sanitiseInputText(username);
-      if (cleanUsername.length < 3) {
-        throw new BadRequestError(
-          "Username must be at least 3 characters long."
-        );
-      }
-      changes.username = cleanUsername;
-    }
-
-    if (password) {
-      const cleanPassword = sanitiseInputText(password);
-      const { valid, reason } = evaulatePassword(cleanPassword);
-      if (!valid) {
-        throw new BadRequestError(reason);
-      }
-      changes.passwordHash = await hashPassword(cleanPassword);
-    }
-
-    const updatedUser = await Users.findByIdAndUpdate(userID, changes, {
-      new: true,
-    }).select("-passwordHash");
-
-    if (!updatedUser) {
-      throw new BadRequestError("Couldn't Update User.");
-    }
-
-    return respondWithJson(res, HTTPCodes.OK, {
-      userID: updatedUser._id,
-      email: updatedUser.email,
-      username: updatedUser.username,
-      mfaEnabled: updatedUser.mfaEnabled,
-      createdAt: updatedUser.createdAt,
-    });
+    changes.mfaEnabled = !data.mfaEnabled;
   }
+  if (username) {
+    const cleanUsername = sanitiseInputText(username);
+    if (cleanUsername.length < 3) {
+      throw new BadRequestError("Username must be at least 3 characters long.");
+    }
+    changes.username = cleanUsername;
+  }
+
+  if (password) {
+    const cleanPassword = sanitiseInputText(password);
+    const { valid, reason } = evaulatePassword(cleanPassword);
+    if (!valid) {
+      throw new BadRequestError(reason);
+    }
+    changes.passwordHash = await hashPassword(cleanPassword);
+  }
+
+  const updatedUser = await Users.findByIdAndUpdate(userID, changes, {
+    new: true,
+  }).select("-passwordHash");
+
+  if (!updatedUser) {
+    throw new BadRequestError("Couldn't Update User.");
+  }
+
+  return respondWithJson(res, HTTPCodes.OK, {
+    userID: updatedUser._id,
+    email: updatedUser.email,
+    username: updatedUser.username,
+    mfaEnabled: updatedUser.mfaEnabled,
+    createdAt: updatedUser.createdAt,
+  });
 }

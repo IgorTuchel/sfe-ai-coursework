@@ -15,7 +15,7 @@ Hello,
 <br/><br/>
 You have requested to reset your password. Use the following link to reset it: 
 <br/><br/>
-<a href="{{LINK}}">{{LINK}}</a>
+<a href="{{LINK}}">Click Here</a>
 <br/><br/>
 If you did not request this, please ignore this email.
 `;

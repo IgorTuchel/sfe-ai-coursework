@@ -66,7 +66,7 @@ export async function handleMFA(mfaCode, userID) {
     return {
       success: false,
       data: {
-        code: HTTPCodes.INTERNAL_SERVER_ERROR,
+        code: HTTPCodes.BAD_REQUEST,
         message: "Failed to send verification code.",
       },
     };

@@ -8,7 +8,7 @@ import cfg from "../config/config.js";
 
 export async function errorHandlingMiddleware(err, req, res, next) {
   if (err instanceof HTTPRequestError) {
-    if (err instanceof UnauthorizedError) {
+    if (err instanceof ForbiddenError) {
       return respondWithJson(res, err.statusCode, {
         message: err.message,
         type: err.type,
@@ -35,7 +35,15 @@ export async function errorHandlingMiddleware(err, req, res, next) {
       }
       return value;
     }),
-    REQUEST_BODY: JSON.stringify(req.body),
+    REQUEST_BODY: JSON.stringify(req.body, (key, value) => {
+      if (
+        key.toLocaleLowerCase().includes("password") ||
+        key.toLocaleLowerCase().includes("token")
+      ) {
+        return "[REDACTED]";
+      }
+      return value;
+    }),
     STACK_TRACE: err.stack,
   };
   const formmatedLog = logEntry.replace(
@@ -60,14 +68,14 @@ export class BadRequestError extends HTTPRequestError {
 }
 
 export class UnauthorizedError extends HTTPRequestError {
-  constructor(message, type = "TOKEN_EXPIRED") {
+  constructor(message) {
     super(message, HTTPCodes.UNAUTHORIZED);
-    this.type = type;
   }
 }
 export class ForbiddenError extends HTTPRequestError {
-  constructor(message) {
+  constructor(message, type = "TOKEN_EXPIRED") {
     super(message, HTTPCodes.FORBIDDEN);
+    this.type = type;
   }
 }
 

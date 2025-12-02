@@ -5,6 +5,7 @@ import { handleMFA } from "../middleware/mfaVerificationMiddleware.js";
 import {
   UnauthorizedError,
   BadRequestError,
+  ForbiddenError,
 } from "../middleware/errorMiddleware.js";
 import {
   sanitiseInputEmail,
@@ -38,7 +39,7 @@ export async function handlerLogIn(req, res) {
   if (dbUser.mfaEnabled) {
     const { success, data } = await handleMFA(mfaCode, dbUser._id);
     if (!success) {
-      throw new UnauthorizedError(data.message);
+      throw new ForbiddenError(data.message, "MFA_REQUIRED");
     }
   }
 

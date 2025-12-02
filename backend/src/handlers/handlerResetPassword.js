@@ -3,7 +3,11 @@ import {
   verifyResetPasswordLink,
 } from "../middleware/resetPasswordVerificationMiddleware.js";
 import Users from "../models/usersModel.js";
-import { HTTPCodes, respondWithJson } from "../utils/json.js";
+import {
+  HTTPCodes,
+  respondWithErrorJson,
+  respondWithJson,
+} from "../utils/json.js";
 import { evaulatePassword } from "../utils/passwordStrength.js";
 import { hashPassword } from "../utils/hashedPass.js";
 import {
