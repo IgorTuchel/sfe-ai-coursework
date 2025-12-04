@@ -7,9 +7,14 @@ import { ForbiddenError, UnauthorizedError } from "./errorMiddleware.js";
 export async function authRoute(req, res, next) {
   const bodyExists = req?.body || false;
 
-  if (!bodyExists) {
+  if (!bodyExists && req.method !== "GET") {
     throw new UnauthorizedError("Request body is missing.");
   }
+
+  if (!bodyExists && req.method === "GET") {
+    req.body = {};
+  }
+
   const accessToken = req?.cookies?.accessToken || "";
   const refreshToken = req?.cookies?.refreshToken || "";
   if (!accessToken && !refreshToken) {
@@ -35,6 +40,7 @@ export async function authRoute(req, res, next) {
     }
     throw new UnauthorizedError("Access token has expired.");
   }
+
   req.body.userID = data.userID;
   next();
 }

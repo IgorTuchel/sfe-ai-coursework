@@ -10,7 +10,7 @@ export async function errorHandlingMiddleware(err, req, res, next) {
   if (err instanceof HTTPRequestError) {
     if (err instanceof ForbiddenError) {
       return respondWithJson(res, err.statusCode, {
-        message: err.message,
+        error: err.message,
         type: err.type,
       });
     }

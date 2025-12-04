@@ -45,7 +45,7 @@ export async function handleMFA(mfaCode, userID) {
     };
   }
 
-  if (mfaCode) {
+  if (mfaCode.length === 6) {
     const verified = await verifyCode(userID, mfaCode);
     if (!verified) {
       return {

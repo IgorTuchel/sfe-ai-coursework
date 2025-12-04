@@ -1,2 +1,15 @@
 @import "tailwindcss";
-@plugin "daisyui";
+
+@plugin "daisyui" {
+  /* Only load this one theme, making it default automatically */
+  themes: dark --default;
+}
+
+@plugin "daisyui/theme" {
+  name: "dark";
+  default: true;
+  --color-primary: oklch(66.89% 0.13 233.91);
+  --color-base-100: oklch(22.61% 0 106.55);
+  --color-success: oklch(72.22% 0.21 145.68);
+  --color-error: oklch(63.59% 0.25 28.29);
+}

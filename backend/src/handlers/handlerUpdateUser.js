@@ -27,7 +27,6 @@ export async function handlerUpdateUser(req, res) {
 
   if (mfaEnabled) {
     const { success, data } = await handleMFA(mfaCode, userID);
-    console.log("MFA Result:", success, data);
     if (!success) {
       if (data.code === HTTPCodes.FORBIDDEN) {
         throw new ForbiddenError(data.message, "MFA_REQUIRED");
@@ -67,6 +66,7 @@ export async function handlerUpdateUser(req, res) {
     email: updatedUser.email,
     username: updatedUser.username,
     mfaEnabled: updatedUser.mfaEnabled,
+    role: updatedUser.role,
     createdAt: updatedUser.createdAt,
   });
 }

@@ -53,11 +53,11 @@ export async function handlerMakeUser(req, res) {
     });
 
     return respondWithJson(res, HTTPCodes.CREATED, {
-      message: "User created successfully",
       userID: savedUser._id,
       email: savedUser.email,
       username: savedUser.username,
       mfaEnabled: savedUser.mfaEnabled,
+      role: savedUser.role,
       createdAt: savedUser.createdAt,
     });
   } catch (error) {
