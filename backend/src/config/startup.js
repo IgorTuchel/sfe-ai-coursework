@@ -9,6 +9,7 @@ import connectDB from "./db.js";
 import redisClient from "./redis.js";
 import resendClient from "./resend.js";
 import cfg from "./config.js";
+import geminiClient from "./gemini.js";
 
 const errorLogs = [];
 
@@ -38,7 +39,6 @@ const successMessage =
 `;
 
 async function serviceStartup() {
-  // Connect to AWS S3
   console.log(startupMessage);
   console.log("* Verifiyng s3 connection intergrity...");
   try {
@@ -54,7 +54,6 @@ async function serviceStartup() {
     errorLogs.push("** Failed to verify s3 connection: " + error.message);
   }
 
-  // connect to Resend
   console.log("* Verifying Resend connection integrity...");
   try {
     // Send a test email to verify connection - no other way to verify connection
@@ -80,7 +79,6 @@ async function serviceStartup() {
     errorLogs.push("** Failed to verify Resend connection: " + error.message);
   }
 
-  // Connect to MongoDB
   console.log("* Verifying MongoDB connection integrity...");
   const mongoStatus = await connectDB();
   if (!mongoStatus.success) {
@@ -113,6 +111,24 @@ async function serviceStartup() {
         colors.reset
     );
     errorLogs.push("** Failed to verify Redis connection: " + error.message);
+  }
+
+  console.log("* Verifying Gemini Connection integrity...");
+  try {
+    const models = await geminiClient.models.list();
+    console.log(
+      colors.green +
+        `** Gemini connection verified. Available models ${models.pageLength}+` +
+        colors.reset
+    );
+  } catch (error) {
+    console.log(
+      colors.red +
+        "** Failed to verify Gemini connection: " +
+        error.message +
+        colors.reset
+    );
+    errorLogs.push("** Failed to verify Gemini connection: " + error.message);
   }
 
   if (errorLogs.length > 0) {

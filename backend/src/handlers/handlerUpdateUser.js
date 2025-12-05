@@ -16,7 +16,8 @@ import {
 import { sanitiseInputText } from "../utils/inputSantise.js";
 
 export async function handlerUpdateUser(req, res) {
-  const { userID, password, mfaEnabled, username, mfaCode } = req.body;
+  const { password, mfaEnabled, username, mfaCode } = req.body;
+  let userID = req.user.id;
   if (!password && !mfaEnabled && !username) {
     throw new BadRequestError(
       "A change is required but no changes were provided."
@@ -32,6 +33,8 @@ export async function handlerUpdateUser(req, res) {
         throw new ForbiddenError(data.message, "MFA_REQUIRED");
       } else if (data.code === HTTPCodes.NOT_FOUND) {
         throw new NotFoundError(data.message);
+      } else {
+        throw new BadRequestError(data.message);
       }
     }
     changes.mfaEnabled = !data.mfaEnabled;

@@ -1,9 +1,6 @@
 import cfg from "../config/config.js";
 import redisClient from "../config/redis.js";
-import {
-  sendEmailWithResend,
-  emailTemplates,
-} from "../services/sendEmailService.js";
+import { sendEmailWithResend, emailTemplates } from "../services/sendEmail.js";
 import { HTTPCodes } from "../utils/json.js";
 import Users from "../models/usersModel.js";
 

@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
       }
     };
     checkAuth();
-  }, []);
+  }, [setIsAuthenticated, setUser, setLoading]);
 
   return (
     <AuthContext.Provider

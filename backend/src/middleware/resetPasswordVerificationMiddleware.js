@@ -1,8 +1,5 @@
 import { v4 as uuid } from "uuid";
-import {
-  sendEmailWithResend,
-  emailTemplates,
-} from "../services/sendEmailService.js";
+import { sendEmailWithResend, emailTemplates } from "../services/sendEmail.js";
 import cfg from "../config/config.js";
 import redisClient from "../config/redis.js";
 

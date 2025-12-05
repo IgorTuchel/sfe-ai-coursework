@@ -6,7 +6,7 @@ import {
 } from "../middleware/errorMiddleware.js";
 
 export async function handlerGetUser(req, res) {
-  const userID = req.body.userID;
+  const userID = req.user.id;
   if (!userID) throw new BadRequestError("User ID is required.");
   const dbUser = await Users.findById(userID).select("-passwordHash");
   if (!dbUser) {

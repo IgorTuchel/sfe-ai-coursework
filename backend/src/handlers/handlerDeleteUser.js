@@ -6,7 +6,7 @@ import {
 } from "../middleware/errorMiddleware.js";
 
 export async function handlerDeleteUser(req, res) {
-  const userID = req.body.userID;
+  const userID = req.user.id;
   if (!userID) {
     throw new BadRequestError("User ID is required.");
   }

@@ -5,9 +5,16 @@ import multer from "multer";
 import { fileTypeFromBuffer } from "file-type";
 import { uploadObjectToS3 } from "./services/putObjectS3.js";
 import usersRouter from "./routes/userRoutes.js";
-import resetPasswordRouter from "./routes/resetPasswordRoute.js";
+import resetPasswordRouter from "./routes/resetPasswordRoutes.js";
+import characterRouter from "./routes/characterRoutes.js";
 import cookieParser from "cookie-parser";
-import { errorHandlingMiddleware } from "./middleware/errorMiddleware.js";
+import {
+  BadRequestError,
+  errorHandlingMiddleware,
+} from "./middleware/errorMiddleware.js";
+import geminiClient from "./config/gemini.js";
+import { respondWithJson } from "./utils/json.js";
+import { getEmbeddingFromGemini } from "./services/callEmbedingGemini.js";
 
 const app = express();
 
@@ -20,46 +27,9 @@ app.use(
   })
 );
 
-// TEMP CODE
-
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
-});
-
-app.post("/upload", upload.single("file"), async (req, res) => {
-  if (!req.file) {
-    return res.status(400).send("No file uploaded.");
-  }
-  console.log(
-    `Received file: ${req.file.originalname}, size: ${req.file.size} bytes`
-  );
-
-  const fileType = await fileTypeFromBuffer(req.file.buffer);
-  if (!fileType) {
-    return res.status(400).send("Could not determine file type.");
-  }
-  if (fileType.mime !== "image/png" && fileType.mime !== "image/jpeg") {
-    return res.status(400).send("Only PNG and JPEG files are allowed.");
-  }
-
-  const data = await uploadObjectToS3(
-    req.file.originalname,
-    req.file.buffer,
-    fileType.mime
-  );
-
-  if (!data.success) {
-    return res.status(500).send("Error uploading file to S3.");
-  }
-  console.log("File uploaded to S3:", data.data);
-  res.send("File uploaded successfully.");
-});
-
-// END TEMP CODE
-
 app.use("/users", usersRouter);
 app.use("/reset-password", resetPasswordRouter);
+app.use("/characters", characterRouter);
 
 app.listen(3000, async () => {
   await serviceStartup();

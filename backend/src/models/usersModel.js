@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import RefreshToken from "./refreshTokenModel.js";
 
 const userSchema = new mongoose.Schema(
   {
@@ -10,6 +11,12 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+userSchema.pre("deleteOne", { query: true }, async function (next) {
+  const userID = this.getQuery()["_id"];
+  await RefreshToken.deleteMany({ userID: userID });
+  next();
+});
 
 const User = mongoose.model("User", userSchema);
 export default User;

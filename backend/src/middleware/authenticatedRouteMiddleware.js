@@ -5,15 +5,7 @@ import cfg from "../config/config.js";
 import { ForbiddenError, UnauthorizedError } from "./errorMiddleware.js";
 
 export async function authRoute(req, res, next) {
-  const bodyExists = req?.body || false;
-
-  if (!bodyExists && req.method !== "GET") {
-    throw new UnauthorizedError("Request body is missing.");
-  }
-
-  if (!bodyExists && req.method === "GET") {
-    req.body = {};
-  }
+  req.body = req.body || {};
 
   const accessToken = req?.cookies?.accessToken || "";
   const refreshToken = req?.cookies?.refreshToken || "";
@@ -26,7 +18,7 @@ export async function authRoute(req, res, next) {
     if (refreshToken) {
       const { valid, userID } = await verifyRefreshToken(refreshToken);
       if (valid) {
-        req.body.userID = userID;
+        req.user = { id: userID };
         const newAccessToken = await makeJWT(userID);
         res.cookie("accessToken", newAccessToken, {
           httpOnly: true,
@@ -41,12 +33,12 @@ export async function authRoute(req, res, next) {
     throw new UnauthorizedError("Access token has expired.");
   }
 
-  req.body.userID = data.userID;
+  req.user = { id: data.userID };
   next();
 }
 
 export async function adminRoute(req, res, next) {
-  const dbUser = await Users.findById(req.body.userID);
+  const dbUser = await Users.findById(req.user.id);
   if (!dbUser || dbUser.role !== "admin") {
     throw new ForbiddenError("Admin privileges are required.");
   }

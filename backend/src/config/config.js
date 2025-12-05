@@ -9,6 +9,8 @@ const cfg = {
   resetPasswordURL: getFromEnv("RESET_PASSWORD_URL"),
   mongoURI: getFromEnv("MONGO_URI"),
 
+  geminiAPIKey: getFromEnv("GEMINI_API_KEY"),
+
   jwtSecret: getFromEnv("JWT_SECRET"),
   jwtIss: getFromEnv("JWT_ISS"),
   jwtExpiresIn: getFromEnv("JWT_EXPIRES_IN"),
