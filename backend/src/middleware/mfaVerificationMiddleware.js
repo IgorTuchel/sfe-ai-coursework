@@ -42,7 +42,16 @@ export async function handleMFA(mfaCode, userID) {
     };
   }
 
-  if (mfaCode.length === 6) {
+  if (mfaCode) {
+    if (mfaCode.length !== 6) {
+      return {
+        success: false,
+        data: {
+          code: HTTPCodes.BAD_REQUEST,
+          message: "MFA code must be 6 digits.",
+        },
+      };
+    }
     const verified = await verifyCode(userID, mfaCode);
     if (!verified) {
       return {
