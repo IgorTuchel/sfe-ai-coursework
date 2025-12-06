@@ -27,7 +27,6 @@ app.use("/chat", chatRotuer);
 
 app.listen(cfg.port, async () => {
   await serviceStartup();
-
   console.log(`Server is running on http://localhost:${cfg.port}`);
 });
 

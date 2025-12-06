@@ -31,14 +31,15 @@ export async function verifyRefreshToken(token) {
   return { valid: true, userID: dbToken.userID };
 }
 
-// Later add function to revoke tokens
+export async function invalidateOtherRefreshTokens(userID, excludeToken) {
+  if (!excludeToken) {
+    const success = await RefreshToken.deleteMany({ userID: userID });
+    return success;
+  }
 
-export async function deleteRefreshToken(token) {
-  const dbToken = await RefreshToken.deleteOne({ token: token });
-  return dbToken;
-}
-
-export async function getUserRefreshTokens(userID) {
-  const tokens = await RefreshToken.find({ userID: userID });
-  return tokens;
+  const success = await RefreshToken.deleteMany({
+    userID: userID,
+    token: { $ne: excludeToken },
+  });
+  return success;
 }

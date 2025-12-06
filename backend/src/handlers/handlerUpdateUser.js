@@ -1,8 +1,4 @@
-import {
-  respondWithErrorJson,
-  respondWithJson,
-  HTTPCodes,
-} from "../utils/json.js";
+import { respondWithJson, HTTPCodes } from "../utils/json.js";
 import { evaulatePassword } from "../utils/passwordStrength.js";
 import { hashPassword } from "../utils/hashedPass.js";
 import Users from "../models/usersModel.js";
@@ -10,7 +6,6 @@ import { handleMFA } from "../middleware/mfaVerificationMiddleware.js";
 import {
   NotFoundError,
   BadRequestError,
-  UnauthorizedError,
   ForbiddenError,
 } from "../middleware/errorMiddleware.js";
 import { sanitiseInputText } from "../utils/inputSantise.js";

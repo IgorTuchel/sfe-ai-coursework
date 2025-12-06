@@ -1,12 +1,11 @@
 import geminiClient from "../config/gemini.js";
 
-export async function getEmbeddingFromGemini(dataArray) {
+export async function getEmbeddingFromGemini(dataArray, retryCount = 0) {
   const { success, error } = verifyData(dataArray);
   if (!success) {
     return { success: false, error: error };
   }
   try {
-    console.log("Requesting embeddings from Gemini for data:", dataArray);
     const response = await geminiClient.models.embedContent({
       model: "gemini-embedding-001",
       contents: dataArray,
@@ -21,8 +20,15 @@ export async function getEmbeddingFromGemini(dataArray) {
     }));
     return { success: true, data: embeddedVectors };
   } catch (error) {
-    console.error("Error getting embeddings from Gemini:", error);
-    return { success: false, error: "Error getting embeddings from Gemini." };
+    if (retryCount < 3) {
+      return await getEmbeddingFromGemini(dataArray, retryCount + 1);
+    } else {
+      console.log("Error getting embeddings from Gemini after retries:", error);
+      return {
+        success: false,
+        error: "Error getting embeddings from Gemini after multiple attempts.",
+      };
+    }
   }
 }
 

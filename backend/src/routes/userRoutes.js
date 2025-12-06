@@ -6,6 +6,7 @@ import { handlerUpdateUser } from "../handlers/handlerUpdateUser.js";
 import { authRoute } from "../middleware/authenticatedRouteMiddleware.js";
 import { handlerLogIn } from "../handlers/handlerLogIn.js";
 import { handlerLogout } from "../handlers/handlerLogout.js";
+import { handlerRevokeOtherSessions } from "../handlers/handlerInvalidateOtherSessions.js";
 const router = express.Router();
 
 router.post("/", handlerMakeUser);
@@ -21,5 +22,7 @@ router.put("/", authRoute, handlerUpdateUser);
 router.delete("/", authRoute, handlerDeleteUser);
 
 router.post("/logout", authRoute, handlerLogout);
+
+router.post("/revoke-refresh-tokens", authRoute, handlerRevokeOtherSessions);
 
 export default router;

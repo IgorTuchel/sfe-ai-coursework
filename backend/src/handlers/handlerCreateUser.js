@@ -64,5 +64,6 @@ export async function handlerMakeUser(req, res) {
     if (error.code === 11000) {
       throw new BadRequestError("Email is already registered.");
     }
+    throw error;
   }
 }

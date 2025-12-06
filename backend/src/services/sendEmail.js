@@ -33,7 +33,8 @@ export async function sendEmailWithResend(to, from, subject, htmlBody) {
     html: htmlBody,
   });
   if (error) {
-    return { success: false, data: error };
+    console.log("Error sending email with Resend:", error);
+    return { success: false, data: "Failed to send email." };
   }
   return { success: true, data: data };
 }

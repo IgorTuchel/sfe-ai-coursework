@@ -35,7 +35,7 @@ export async function handlerCreateCharacter(req, res) {
     }
     avatarUrl = `https://${cfg.s3BucketName}.s3.${cfg.s3Region}.amazonaws.com/${fileName}`;
   }
-  console.log("Avatar URL:", avatarUrl);
+
   const newCharacter = new Character({
     name,
     avatarUrl,
@@ -46,12 +46,8 @@ export async function handlerCreateCharacter(req, res) {
     ownerId: req.user.id,
   });
 
-  try {
-    const savedCharacter = await newCharacter.save();
-    respondWithJson(res, HTTPCodes.OK, {
-      character: savedCharacter,
-    });
-  } catch (error) {
-    throw new BadRequestError(error.message);
-  }
+  const savedCharacter = await newCharacter.save();
+  respondWithJson(res, HTTPCodes.OK, {
+    character: savedCharacter,
+  });
 }

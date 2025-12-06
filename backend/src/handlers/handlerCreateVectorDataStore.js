@@ -20,30 +20,23 @@ export async function handlerCreateVectorDataStore(req, res) {
     throw new BadRequestError("No data provided to create vector data store.");
   }
 
-  try {
-    const embeddingRespone = await getEmbeddingFromGemini(dataArray);
-    if (!embeddingRespone.success) {
-      throw new BadRequestError(
-        "Error getting embeddings: " + embeddingRespone.error
-      );
-    }
-
-    for (const vectorData of embeddingRespone.data) {
-      console.log("Vector Data:", vectorData.embedding);
-      console.log("Type of Vector Data:", typeof vectorData.embedding);
-      let dataStore = {
-        characterID: characterID,
-        embedding: vectorData.embedding,
-        text: vectorData.text,
-      };
-      await CharacterVectorStore.create(dataStore);
-    }
-    return respondWithJson(res, HTTPCodes.OK, {
-      message: `${embeddingRespone.data.length} Vector data stores created successfully for character ${characterID}.`,
-    });
-  } catch (error) {
+  const embeddingRespone = await getEmbeddingFromGemini(dataArray);
+  if (!embeddingRespone.success) {
     throw new BadRequestError(
-      "Error creating vector data store: " + error.message
+      "Error getting embeddings: " + embeddingRespone.error
     );
   }
+
+  for (const vectorData of embeddingRespone.data) {
+    let dataStore = {
+      characterID: characterID,
+      embedding: vectorData.embedding,
+      text: vectorData.text,
+    };
+    await CharacterVectorStore.create(dataStore);
+  }
+
+  return respondWithJson(res, HTTPCodes.OK, {
+    message: `${embeddingRespone.data.length} Vector data stores created successfully for character ${characterID}.`,
+  });
 }

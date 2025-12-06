@@ -60,16 +60,13 @@ export async function handlerUpdateCharacter(req, res) {
     );
   }
 
-  try {
-    const updatedCharacter = await Character.findByIdAndUpdate(
-      characterID,
-      changes,
-      { new: true }
-    );
-    respondWithJson(res, HTTPCodes.OK, {
-      character: updatedCharacter,
-    });
-  } catch (error) {
-    throw new BadRequestError(error.message);
-  }
+  const updatedCharacter = await Character.findByIdAndUpdate(
+    characterID,
+    changes,
+    { new: true }
+  );
+
+  respondWithJson(res, HTTPCodes.OK, {
+    character: updatedCharacter,
+  });
 }

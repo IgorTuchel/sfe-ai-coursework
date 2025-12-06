@@ -14,6 +14,7 @@ export async function handlerUpdateVectorDataStore(req, res) {
   if (!characterID) {
     throw new BadRequestError("Character ID is required.");
   }
+
   const character = await CharacterVectorStore.findOne({
     characterID: characterID,
   });
@@ -35,29 +36,23 @@ export async function handlerUpdateVectorDataStore(req, res) {
     throw new BadRequestError("Only one data item can be updated at a time.");
   }
 
-  try {
-    const embeddingResponse = await getEmbeddingFromGemini(dataArray);
-    if (!embeddingResponse.success) {
-      throw new BadRequestError(
-        "Error getting embeddings: " + embeddingResponse.error
-      );
-    }
-
-    await CharacterVectorStore.findByIdAndUpdate(
-      dataVectorStoreId,
-      {
-        embedding: embeddingResponse.data[0].embedding,
-        text: embeddingResponse.data[0].text,
-      },
-      { new: true }
-    );
-
-    return respondWithJson(res, HTTPCodes.OK, {
-      message: `Vector data store updated successfully for character ${characterID}.`,
-    });
-  } catch (error) {
+  const embeddingResponse = await getEmbeddingFromGemini(dataArray);
+  if (!embeddingResponse.success) {
     throw new BadRequestError(
-      "Error updating vector data store: " + error.message
+      "Error getting embeddings: " + embeddingResponse.error
     );
   }
+
+  await CharacterVectorStore.findByIdAndUpdate(
+    dataVectorStoreId,
+    {
+      embedding: embeddingResponse.data[0].embedding,
+      text: embeddingResponse.data[0].text,
+    },
+    { new: true }
+  );
+
+  return respondWithJson(res, HTTPCodes.OK, {
+    message: `Vector data store updated successfully for character ${characterID}.`,
+  });
 }
