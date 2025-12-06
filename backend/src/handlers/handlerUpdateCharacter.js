@@ -9,7 +9,7 @@ import { uploadObjectToS3 } from "../services/putObjectS3.js";
 import cfg from "../config/config.js";
 
 export async function handlerUpdateCharacter(req, res) {
-  const { name, description, systemPrompt, isPublic } = req.body;
+  const { name, description, systemPrompt, firstMessage, isPublic } = req.body;
   const characterID = req.params.id;
   let avatarUrl = null;
 
@@ -46,9 +46,19 @@ export async function handlerUpdateCharacter(req, res) {
     name: name || dbCharacter.name,
     description: description || dbCharacter.description,
     systemPrompt: systemPrompt || dbCharacter.systemPrompt,
+    firstMessage: firstMessage || dbCharacter.firstMessage,
     isPublic: isPublic !== undefined ? isPublic : dbCharacter.isPublic,
     avatarUrl: avatarUrl || dbCharacter.avatarUrl,
   };
+
+  if (
+    changes.systemPrompt.includes("{RETRIVED_RELEVANT_DATA}") === false ||
+    changes.systemPrompt.includes("{CONVERSATION_CONTEXT}") === false
+  ) {
+    throw new BadRequestError(
+      "System prompt must include both {RETRIVED_RELEVANT_DATA} and {CONVERSATION_CONTEXT} placeholders."
+    );
+  }
 
   try {
     const updatedCharacter = await Character.findByIdAndUpdate(

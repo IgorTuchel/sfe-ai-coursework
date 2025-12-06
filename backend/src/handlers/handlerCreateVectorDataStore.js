@@ -2,6 +2,7 @@ import {
   BadRequestError,
   NotFoundError,
 } from "../middleware/errorMiddleware.js";
+import Character from "../models/characterModel.js";
 import CharacterVectorStore from "../models/characterVectorDataStore.js";
 import { getEmbeddingFromGemini } from "../services/callEmbedingGemini.js";
 import { HTTPCodes, respondWithJson } from "../utils/json.js";
@@ -10,9 +11,7 @@ export async function handlerCreateVectorDataStore(req, res) {
   const dataArray = req.body.dataArray;
   const characterID = req.params.id;
 
-  const character = await CharacterVectorStore.findOne({
-    characterID: characterID,
-  });
+  const character = await Character.findById(characterID);
   if (!character) {
     throw new NotFoundError("Character not found for the given characterID.");
   }

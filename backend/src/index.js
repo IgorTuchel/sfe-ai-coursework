@@ -1,20 +1,13 @@
 import express from "express";
 import cors from "cors";
 import serviceStartup from "./config/startup.js";
-import multer from "multer";
-import { fileTypeFromBuffer } from "file-type";
-import { uploadObjectToS3 } from "./services/putObjectS3.js";
 import usersRouter from "./routes/userRoutes.js";
 import resetPasswordRouter from "./routes/resetPasswordRoutes.js";
 import characterRouter from "./routes/characterRoutes.js";
 import cookieParser from "cookie-parser";
-import {
-  BadRequestError,
-  errorHandlingMiddleware,
-} from "./middleware/errorMiddleware.js";
-import geminiClient from "./config/gemini.js";
-import { respondWithJson } from "./utils/json.js";
-import { getEmbeddingFromGemini } from "./services/callEmbedingGemini.js";
+import { errorHandlingMiddleware } from "./middleware/errorMiddleware.js";
+import chatRotuer from "./routes/chatRoute.js";
+import cfg from "./config/config.js";
 
 const app = express();
 
@@ -30,11 +23,12 @@ app.use(
 app.use("/users", usersRouter);
 app.use("/reset-password", resetPasswordRouter);
 app.use("/characters", characterRouter);
+app.use("/chat", chatRotuer);
 
-app.listen(3000, async () => {
+app.listen(cfg.port, async () => {
   await serviceStartup();
 
-  console.log("Server is running on http://localhost:3000");
+  console.log(`Server is running on http://localhost:${cfg.port}`);
 });
 
 app.use(errorHandlingMiddleware);

@@ -25,6 +25,9 @@ const cfg = {
   resendApiKey: getFromEnv("RESEND_API_KEY"),
   resendSender: getFromEnv("RESEND_SENDER"),
 
+  rrfScore: getFromEnv("RRF_SCORE"),
+  ragMaxRetrieve: getFromEnv("RAG_MAX_RETRIEVE"),
+
   errorLogFile: await generateErrorLog(),
 };
 

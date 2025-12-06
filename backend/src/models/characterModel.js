@@ -12,6 +12,7 @@ const characterSchema = new mongoose.Schema(
     },
     description: { type: String, required: false, default: "" },
     systemPrompt: { type: String, required: false, default: "" },
+    firstMessage: { type: String, required: false, default: "" },
     isPublic: { type: Boolean, default: false },
     ownerId: {
       type: mongoose.Schema.Types.ObjectId,

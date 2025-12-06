@@ -6,7 +6,7 @@ import { fileTypeFromBuffer } from "file-type";
 import { uploadObjectToS3 } from "../services/putObjectS3.js";
 import cfg from "../config/config.js";
 export async function handlerCreateCharacter(req, res) {
-  const { name, description, systemPrompt, isPublic } = req.body;
+  const { name, description, systemPrompt, firstMessage, isPublic } = req.body;
   if (!name) {
     throw new BadRequestError("Character name is required");
   }
@@ -41,6 +41,7 @@ export async function handlerCreateCharacter(req, res) {
     avatarUrl,
     description,
     systemPrompt,
+    firstMessage,
     isPublic,
     ownerId: req.user.id,
   });
