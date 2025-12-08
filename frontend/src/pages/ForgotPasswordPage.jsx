@@ -46,14 +46,14 @@ export default function ForgotPasswordPage() {
             <h2 className="card-title text-primary-500 text-2xl  text-center justify-center mb-2">
               Reset Password
             </h2>
-            <p className="text-center text-white mb-6">
+            <p className="text-center text-white">
               Enter your email to reset your password, we'll send you a link.
             </p>
 
             <form className="space-y-4">
               <div className="form-control">
                 <div className="w-full justify-between flex">
-                  <label className="input input-bordered w-full rounded-2xl mt-2 flex items-center gap-2 focus-within:input-primary">
+                  <label className="input input-bordered w-full rounded-2xl mt-2 flex items-center gap-2 focus-within:input-primary bg-base-700">
                     <LuMail className="h-[1em] opacity-75" />
                     <input
                       placeholder="me@proton.me"

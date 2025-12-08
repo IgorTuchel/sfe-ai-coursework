@@ -29,11 +29,11 @@ export default function LoginPage() {
     useContext(AuthContext);
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   if (isAuthenticated) {
-  //     navigate("/dashboard", { replace: true });
-  //   }
-  // }, [isAuthenticated, navigate]);
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -83,7 +83,6 @@ export default function LoginPage() {
 
   return (
     <>
-      <Toaster />
       <div className="min-h-screen flex items-center justify-center p-4">
         <MfaModel
           showMfaModal={showMfaModal}
@@ -99,7 +98,7 @@ export default function LoginPage() {
               alt="History.Ai Logo"
               className="mx-auto h-16"
             />
-            <h2 className="card-title text-primary-500 text-2xl  text-center justify-center mb-2">
+            <h2 className="card-title text-primary text-2xl  text-center justify-center mb-2">
               Welcome Back
             </h2>
             <p className="text-center text-white mb-6">
@@ -114,7 +113,7 @@ export default function LoginPage() {
                   </span>
                 </label>
                 <div className="w-full justify-between flex">
-                  <label className="input input-bordered w-full rounded-2xl mt-2 flex items-center gap-2 focus-within:input-primary">
+                  <label className="input input-bordered w-full rounded-2xl mt-2 flex items-center gap-2 focus-within:input-primary bg-base-700">
                     <LuMail className="h-[1em] opacity-75" />
                     <input
                       placeholder="me@proton.me"
@@ -136,7 +135,7 @@ export default function LoginPage() {
                   </span>
                 </label>
                 <div className="w-full justify-between flex">
-                  <label className="input input-bordered w-full rounded-2xl mt-2 flex items-center gap-2 focus-within:input-primary">
+                  <label className="input input-bordered w-full bg-base-700 rounded-2xl mt-2 flex items-center gap-2 focus-within:input-primary">
                     <LuKeyRound className="h-[1em] opacity-75" />
                     <input
                       placeholder="••••••••"
@@ -170,7 +169,7 @@ export default function LoginPage() {
                 />
               </div>
               <div className="flex flex-row justify-between items-center w-full">
-                <label className="label cursor-pointer flex items-center gap-3 p-0">
+                <label className="label cursor-pointer flex items-center bg-base-700 gap-3 p-0">
                   <input
                     type="checkbox"
                     className="checkbox bg-base-100 checkbox-sm"

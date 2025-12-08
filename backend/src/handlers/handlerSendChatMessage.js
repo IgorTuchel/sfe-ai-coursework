@@ -23,9 +23,9 @@ export async function handlerSendChatMessage(req, res) {
     throw new BadRequestError("Message content is required.");
   }
 
-  if (message.length > 512) {
+  if (message.length > 2048) {
     throw new BadRequestError(
-      "Message exceeds maximum length of 512 characters."
+      "Message exceeds maximum length of 2048 characters."
     );
   }
 
@@ -88,6 +88,8 @@ export async function handlerSendChatMessage(req, res) {
   });
 
   return respondWithJson(res, HTTPCodes.OK, {
-    aiResponse: aiResponse.data,
+    content: aiResponse.data,
+    role: "system",
+    timestamp: new Date(),
   });
 }

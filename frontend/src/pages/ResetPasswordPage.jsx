@@ -66,7 +66,7 @@ export default function ResetPasswordPage() {
                   </span>
                 </label>
                 <div className="w-full justify-between flex">
-                  <label className="input input-bordered w-full rounded-2xl mt-2 flex items-center gap-2 focus-within:input-primary">
+                  <label className="input input-bordered w-full rounded-2xl mt-2 flex items-center gap-2 focus-within:input-primary bg-base-700">
                     <LuKeyRound className="h-[1em] opacity-75" />
                     <input
                       placeholder="••••••••"
@@ -103,7 +103,7 @@ export default function ResetPasswordPage() {
                   </span>
                 </label>
                 <div className="w-full justify-between flex">
-                  <label className="input input-bordered w-full rounded-2xl mt-2 flex items-center gap-2 focus-within:input-primary">
+                  <label className="input input-bordered w-full rounded-2xl mt-2 flex items-center gap-2 focus-within:input-primary bg-base-700">
                     <LuKeyRound className="h-[1em] opacity-75" />
                     <input
                       placeholder="••••••••"

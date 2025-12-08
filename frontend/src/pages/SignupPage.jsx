@@ -7,6 +7,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { LuEye, LuEyeClosed, LuKeyRound, LuMail, LuUser } from "react-icons/lu";
 import { PasswordRequirements } from "../components/PasswordRequirements.jsx";
+import { useEffect } from "react";
 
 export default function SignupPage() {
   const [username, setUsername] = useState("");
@@ -19,11 +20,11 @@ export default function SignupPage() {
     useContext(AuthContext);
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   if (isAuthenticated) {
-  //     navigate("/dashboard", { replace: true });
-  //   }
-  // }, [isAuthenticated, navigate]);
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -88,7 +89,7 @@ export default function SignupPage() {
                   </span>
                 </label>
                 <div className="w-full justify-between flex">
-                  <label className="input input-bordered w-full rounded-2xl mt-2 flex items-center gap-2 focus-within:input-primary">
+                  <label className="input input-bordered w-full rounded-2xl mt-2 flex items-center gap-2 focus-within:input-primary bg-base-700">
                     <LuUser className="h-[1em] opacity-75" />
                     <input
                       placeholder="Your Username"
@@ -109,7 +110,7 @@ export default function SignupPage() {
                   </span>
                 </label>
                 <div className="w-full justify-between flex">
-                  <label className="input input-bordered w-full rounded-2xl mt-2 flex items-center gap-2 focus-within:input-primary">
+                  <label className="input input-bordered w-full rounded-2xl mt-2 flex items-center gap-2 focus-within:input-primary bg-base-700">
                     <LuMail className="h-[1em] opacity-75" />
                     <input
                       placeholder="me@proton.me"
@@ -131,7 +132,7 @@ export default function SignupPage() {
                   </span>
                 </label>
                 <div className="w-full justify-between flex">
-                  <label className="input input-bordered w-full rounded-2xl mt-2 flex items-center gap-2 focus-within:input-primary">
+                  <label className="input input-bordered w-full rounded-2xl mt-2 flex items-center gap-2 focus-within:input-primary bg-base-700">
                     <LuKeyRound className="h-[1em] opacity-75" />
                     <input
                       placeholder="••••••••"
