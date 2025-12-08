@@ -2,11 +2,14 @@ import { LuShare } from "react-icons/lu";
 
 export default function CharacterCard({ character, onChat }) {
   return (
-    <article className="card bg-base-600 h-40 shadow-md rounded-2xl overflow-hidden border border-base-500/50 hover:shadow-lg transition-all hover:border-primary/60 cursor-pointer flex flex-row hover:bg-base-500/50 hover:shadow-primary/20 group">
+    <article className="card bg-base-600 h-40 shadow-md rounded-2xl overflow-hidden border border-base-500/50 hover:shadow-lg transition-all hover:border-primary/60 flex flex-row hover:bg-base-500/50 hover:shadow-primary/20 group">
       <figure className="w-32 sm:w-40 h-full p-0 m-0 overflow-hidden bg-base-700 flex-shrink-0 relative">
         <img
-          src={character?.avatarUrl}
-          alt="Han Xiao"
+          src={
+            character?.avatarUrl ||
+            "https://bournemouth-uni-software-engineering-coursework.s3.eu-north-1.amazonaws.com/avatars/default-avatar.png"
+          }
+          alt={`Avatar of ${character?.name}`}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
 
@@ -28,6 +31,7 @@ export default function CharacterCard({ character, onChat }) {
           <button
             onClick={(e) => {
               e.stopPropagation();
+              onChat(character.id);
             }}
             className="btn btn-xs sm:btn-sm text-base-100 font-bold btn-primary flex-grow">
             Chat

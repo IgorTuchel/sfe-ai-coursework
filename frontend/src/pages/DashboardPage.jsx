@@ -13,19 +13,19 @@ import toast, { Toaster } from "react-hot-toast";
 
 export default function HomePage() {
   const [isOpen, setIsOpen] = useState(true);
-  const [navBarContext, setNavBarContext] = useState(null);
-  const { isAuthenticated, loading, setLoading } = useContext(AuthContext);
+  const { isAuthenticated, loading } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function checkAuth() {
-      if (!loading && !isAuthenticated) {
-        toast.error("Please log in to access the dashboard.");
-        navigate("/login");
-      }
+    if (!loading && !isAuthenticated) {
+      toast.error("Please log in to access the dashboard.");
+      navigate("/login", { replace: true });
     }
-    checkAuth();
-  }, [isAuthenticated, loading, navigate]);
+  }, [isAuthenticated, loading]);
+
+  if (loading && !isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -36,11 +36,7 @@ export default function HomePage() {
         <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
       </div>
       <div className="flex flex-col w-full">
-        <Navbar
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          navBarContext={navBarContext}
-        />
+        <Navbar isOpen={isOpen} setIsOpen={setIsOpen} />
         <div className="flex-1 overflow-hidden my-2">
           <Outlet />
         </div>

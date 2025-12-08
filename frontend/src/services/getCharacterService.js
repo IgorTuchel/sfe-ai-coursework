@@ -13,3 +13,18 @@ export const getCharacter = async (characterID) => {
     };
   }
 };
+
+export const getCharacterAdmin = async (characterID) => {
+  try {
+    const res = await api.get(`/characters/all/${characterID}`);
+    return {
+      success: true,
+      data: res.data.character,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+};

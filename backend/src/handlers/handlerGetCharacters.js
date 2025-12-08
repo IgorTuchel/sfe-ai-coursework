@@ -39,3 +39,14 @@ export async function handlerGetAllCharacters(req, res) {
   const characters = await Character.find({});
   return respondWithJson(res, HTTPCodes.OK, { characters: characters });
 }
+
+export async function handlerGetAllCharacterByID(req, res) {
+  const characterID = req.params.characterID;
+
+  const character = await Character.findById(characterID);
+  if (!character) {
+    throw new BadRequestError("Character not found.");
+  }
+
+  return respondWithJson(res, HTTPCodes.OK, { character: character });
+}

@@ -15,7 +15,7 @@ export const updateChatService = async (chatID, newName, isBookmarked) => {
     return {
       success: false,
       message:
-        error.response.data.error ||
+        error.response?.data?.error ||
         "An error occurred while updating the chat.",
     };
   }

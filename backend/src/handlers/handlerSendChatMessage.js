@@ -13,6 +13,7 @@ import { getEmbeddingFromGemini } from "../services/callEmbedingGemini.js";
 import { HTTPCodes, respondWithJson } from "../utils/json.js";
 import { callGemini } from "../services/callGemini.js";
 import { getCharacterInformation } from "../services/characterContextManager.js";
+import User from "../models/usersModel.js";
 
 export async function handlerSendChatMessage(req, res) {
   const userID = req.user.id;
@@ -55,14 +56,16 @@ export async function handlerSendChatMessage(req, res) {
     message,
     userMessageEmbedding.data[0].embedding
   );
-
+  const userNameDB = await User.findById(userID).select("username");
   const characterInfo = await getCharacterInformation(chatDB.characterID);
   const systemPrompt = characterInfo.systemPrompt
     .replace("{CONVERSATION_CONTEXT}", context.join("\n"))
     .replace(
       "{RETRIVED_RELEVANT_DATA}",
       vectorQueryResponse.map((item) => item.text).join("\n")
-    );
+    )
+    .replace("{USERNAME}", userNameDB.username);
+  console.log("System Prompt:", systemPrompt);
 
   const aiResponse = await callGemini(systemPrompt, message);
   if (!aiResponse.success) {

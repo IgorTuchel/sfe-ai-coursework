@@ -7,6 +7,7 @@ import Character from "../models/characterModel.js";
 import { fileTypeFromBuffer } from "file-type";
 import { uploadObjectToS3 } from "../services/putObjectS3.js";
 import cfg from "../config/config.js";
+import { invalidateCharacterCache } from "../services/characterContextManager.js";
 
 export async function handlerUpdateCharacter(req, res) {
   const { name, description, systemPrompt, firstMessage, isPublic } = req.body;
@@ -53,10 +54,11 @@ export async function handlerUpdateCharacter(req, res) {
 
   if (
     changes.systemPrompt.includes("{RETRIVED_RELEVANT_DATA}") === false ||
-    changes.systemPrompt.includes("{CONVERSATION_CONTEXT}") === false
+    changes.systemPrompt.includes("{CONVERSATION_CONTEXT}") === false ||
+    changes.systemPrompt.includes("{USERNAME}") === false
   ) {
     throw new BadRequestError(
-      "System prompt must include both {RETRIVED_RELEVANT_DATA} and {CONVERSATION_CONTEXT} placeholders."
+      "System prompt must include both {RETRIVED_RELEVANT_DATA}, {CONVERSATION_CONTEXT}, {USERNAME} placeholders."
     );
   }
 
@@ -69,4 +71,6 @@ export async function handlerUpdateCharacter(req, res) {
   respondWithJson(res, HTTPCodes.OK, {
     character: updatedCharacter,
   });
+
+  invalidateCharacterCache(characterID);
 }

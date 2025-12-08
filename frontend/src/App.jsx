@@ -6,10 +6,12 @@ import LoginPage from "./pages/LoginPage.jsx";
 import SignupPage from "./pages/SignupPage.jsx";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import ResetPasswordPage from "./pages/ResetPasswordPage.jsx";
-import CharactersPage from "./pages/CharactersPage.jsx";
+import CharactersPage from "./pages/DashboardLandingPage.jsx";
 import ChatPage from "./pages/ChatPage.jsx";
 import { NavbarProvider } from "./context/NavbarContext.jsx";
 import { Toaster } from "react-hot-toast";
+import CreateCharacterPage from "./pages/CreateCharacterPage.jsx";
+import DashboardLandingPage from "./pages/DashboardLandingPage.jsx";
 
 function App() {
   return (
@@ -25,8 +27,16 @@ function App() {
             element={<ResetPasswordPage />}
           />
           <Route path="/dashboard" element={<DashboardPage />}>
-            <Route index element={<CharactersPage />} />
+            <Route index element={<DashboardLandingPage />} />
             <Route path="/dashboard/chat/:chatId" element={<ChatPage />} />
+            <Route
+              path="/dashboard/characters/create"
+              element={<CreateCharacterPage />}
+            />
+            <Route
+              path="/dashboard/characters/create/:id"
+              element={<CreateCharacterPage />}
+            />
           </Route>
         </Routes>
       </NavbarProvider>

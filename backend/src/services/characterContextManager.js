@@ -19,3 +19,7 @@ export async function getCharacterInformation(characterID) {
 
   return null;
 }
+
+export async function invalidateCharacterCache(characterID) {
+  await redisClient.del(`character_info_${characterID}`);
+}

@@ -18,12 +18,13 @@ import { getChats } from "../services/getChatsService";
 import { AuthContext } from "../context/AuthContext";
 import PanelToggle from "./ClosePanel";
 import toast from "react-hot-toast";
+import { logout } from "../services/logoutService";
 
 export default function Sidebar({ isOpen, setIsOpen }) {
   const [chats, setChats] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { isAuthenticated, user } = useContext(AuthContext);
+  const { isAuthenticated, setIsAuthenticated, user } = useContext(AuthContext);
 
   const isMobile = window.innerWidth < 768;
 
@@ -46,7 +47,13 @@ export default function Sidebar({ isOpen, setIsOpen }) {
   }, [isAuthenticated]);
 
   const handleLogout = async () => {
-    toast.error("Logging out...");
+    const result = await logout();
+    if (result.success) {
+      toast.success("Logged out successfully.");
+      setIsAuthenticated(false);
+      return;
+    }
+    toast.error(result.message || "Logging out...");
   };
 
   const closeDropdown = () => {

@@ -12,9 +12,9 @@ let failedQueue = [];
 const processQueue = (error, token = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
-      prom.reject(error);
+      return prom.reject(error);
     } else {
-      prom.resolve(token);
+      return prom.resolve(token);
     }
   });
 
@@ -25,7 +25,6 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    console.log("Intercepted response error:", error.response);
     if (originalRequest.url === "/users/login") {
       return error.response;
     }
@@ -40,10 +39,9 @@ api.interceptors.response.use(
       originalRequest._retry = true;
       isRefreshing = true;
       try {
-        await api.get("/users");
+        await axios.get("/users");
         processQueue(null);
         isRefreshing = false;
-
         return api(originalRequest);
       } catch (refresherror) {
         processQueue(refresherror);
@@ -51,6 +49,7 @@ api.interceptors.response.use(
         return Promise.reject(refresherror);
       }
     }
+    console.log("Response error not handled by interceptor:", error);
     return Promise.reject(error);
   }
 );

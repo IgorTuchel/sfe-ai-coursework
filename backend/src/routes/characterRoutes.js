@@ -10,6 +10,7 @@ import {
   handlerGetAllCharacters,
   handlerGetCharacters,
   handlerGetCharacter,
+  handlerGetAllCharacterByID,
 } from "../handlers/handlerGetCharacters.js";
 import { handlerDeleteCharacter } from "../handlers/handlerDeleteCharacter.js";
 import { handlerCreateVectorDataStore } from "../handlers/handlerCreateVectorDataStore.js";
@@ -21,10 +22,16 @@ const router = express.Router();
 // General access to character info
 router.get("/", handlerGetCharacters);
 
-router.get("/:characterID", handlerGetCharacter);
-
-// Authenticated and Admin routes below
 router.get("/all", authRoute, adminRoute, handlerGetAllCharacters);
+
+router.get(
+  "/all/:characterID",
+  authRoute,
+  adminRoute,
+  handlerGetAllCharacterByID
+);
+
+router.get("/:characterID", handlerGetCharacter);
 
 router.post(
   "/",

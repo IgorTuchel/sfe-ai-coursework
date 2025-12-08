@@ -33,14 +33,13 @@ export default function ChatPage() {
   const { setNavBarTitle, setShowBookmarkIcon, setChatID, setIsBookmarked } =
     useContext(NavbarContext);
 
-  const { user, loading, setLoading } = useContext(AuthContext);
+  const { loading, setLoading } = useContext(AuthContext);
 
   useEffect(() => {
     async function fetchData(chatId) {
       setLoading(true);
       const data = await getChat(chatId);
       if (data.success) {
-        console.log("Chat data:", data.data);
         setNavBarTitle(data.data.chatName);
         setShowBookmarkIcon(true);
         setIsBookmarked(data.data.bookmarked);
@@ -192,7 +191,6 @@ export default function ChatPage() {
                   <button
                     type="submit"
                     disabled={loading || !message.trim()}
-                    disabled={!message.trim()}
                     className="btn btn-primary bg-base-100 text-primary btn-circle btn-sm disabled:opacity-50">
                     <LuSendHorizontal className="w-5 h-5" />
                   </button>
