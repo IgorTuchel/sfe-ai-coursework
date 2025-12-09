@@ -1,10 +1,13 @@
+/**
+ * @file startup.js
+ * @description Service integrity orchestrator. Verifies connectivity to all external
+ * dependencies (S3, Resend, MongoDB, Redis, Gemini) before the server is allowed to start.
+ * @module config/startup
+ */
+
 import s3Client from "./s3.js";
 import { ListBucketsCommand } from "@aws-sdk/client-s3";
-import {
-  colors,
-  generateErrorLog,
-  appendToErrorLog,
-} from "../utils/errorWriter.js";
+import { colors, appendToErrorLog } from "../utils/errorWriter.js";
 import connectDB from "./db.js";
 import redisClient from "./redis.js";
 import resendClient from "./resend.js";
@@ -28,7 +31,8 @@ const errorMessage =
 ===========================
     Service startup encountered errors. Shutting down...    
 ===========================
-`;
+` +
+  colors.reset;
 
 const successMessage =
   colors.green +
@@ -36,8 +40,22 @@ const successMessage =
 ===========================
     All services started successfully.
 ===========================
-`;
+` +
+  colors.reset;
 
+/**
+ * Runs sequential integrity checks on all critical services.
+ * * @description
+ * 1. Attempts to connect to S3, Resend, MongoDB, Redis, and Gemini.
+ * 2. Aggregates all connection errors into a local log.
+ * 3. If ANY critical service fails, writes to the persistent error log and kills the process.
+ * * @async
+ * @function serviceStartup
+ * @returns {Promise<void>} Resolves only if all services are healthy.
+ * @example
+ * // Used in index.js on server startup
+ * await serviceStartup();
+ */
 async function serviceStartup() {
   console.log(startupMessage);
   console.log("* Verifiyng s3 connection intergrity...");
@@ -102,6 +120,12 @@ async function serviceStartup() {
   try {
     await redis.connect();
     await redis.ping();
+    await redis.setEx("startup_test_key", 10, "test");
+    const res = await redis.get("startup_test_key");
+    if (res !== "test") {
+      throw new Error("Redis test key retrieval failed.");
+    }
+    await redis.del("startup_test_key");
     console.log(colors.green + "** Redis connection verified." + colors.reset);
   } catch (error) {
     console.log(
@@ -133,7 +157,7 @@ async function serviceStartup() {
 
   if (errorLogs.length > 0) {
     await appendToErrorLog(cfg.errorLogFile, errorLogs.join("\n"));
-    console.log(errorMessage + colors.reset);
+    console.log(errorMessage);
     console.log(
       colors.red +
         `Shutting Down - Startup Failed: Error log saved to ${errorLogFile}. Please check the log for details.` +
@@ -141,7 +165,7 @@ async function serviceStartup() {
     );
     process.exit(1);
   } else {
-    console.log(successMessage + colors.reset);
+    console.log(successMessage);
   }
 }
 
