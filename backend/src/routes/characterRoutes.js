@@ -16,6 +16,7 @@ import { handlerDeleteCharacter } from "../handlers/handlerDeleteCharacter.js";
 import { handlerCreateVectorDataStore } from "../handlers/handlerCreateVectorDataStore.js";
 import { handlerUpdateVectorDataStore } from "../handlers/handlerUpdateVectoreDataStore.js";
 import { handlerDeleteVectorDataStore } from "../handlers/handlerDeleteVectorDataStore.js";
+import { handlerGetVectorDataStore } from "../handlers/handlerGetVectorDataStore.js";
 
 const router = express.Router();
 
@@ -52,17 +53,30 @@ router.put(
 router.delete("/:id", authRoute, adminRoute, handlerDeleteCharacter);
 
 // Hnadles the vector data stores for a character
-router.post("/:id/data", authRoute, adminRoute, handlerCreateVectorDataStore);
+
+router.get(
+  "/:characterID/data",
+  authRoute,
+  adminRoute,
+  handlerGetVectorDataStore
+);
+
+router.post(
+  "/:characterID/data",
+  authRoute,
+  adminRoute,
+  handlerCreateVectorDataStore
+);
 
 router.put(
-  "/:id/data/:dataVectorStoreId",
+  "/:characterID/data/:dataVectorStoreId",
   authRoute,
   adminRoute,
   handlerUpdateVectorDataStore
 );
 
 router.delete(
-  "/:id/data/:dataVectorStoreId",
+  "/:characterID/data/:dataVectorStoreId",
   authRoute,
   adminRoute,
   handlerDeleteVectorDataStore

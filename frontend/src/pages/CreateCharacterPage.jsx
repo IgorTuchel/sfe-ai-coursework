@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Import Router hooks
+import { useParams, useNavigate } from "react-router-dom";
 import {
   LuUpload,
   LuUser,
@@ -10,18 +10,21 @@ import {
   LuArrowLeft,
   LuInfo,
   LuEye,
+  LuCode,
 } from "react-icons/lu";
-// Import your update and get services here
 import { createCharacter } from "../services/createCharacterService";
 import toast from "react-hot-toast";
 import CharacterCard from "../components/CharacterCard";
 import { getCharacterAdmin } from "../services/getCharacterService";
 import { updateCharacter } from "../services/updateCharacterService";
 
+// --- IMPORT THE NEW COMPONENT ---
+import VectorStoreManager from "../components/VectorStoreManager";
+
 export default function CharacterFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const isEditMode = Boolean(id); // Determine mode based on ID presence
+  const isEditMode = Boolean(id);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -31,6 +34,29 @@ export default function CharacterFormPage() {
     isPublic: false,
   });
 
+  // ... (keep defaultScript and jsonScriptString state exactly as they were) ...
+  const defaultScript = [
+    {
+      triggers: ["hi", "hello", "hey", "greetings"],
+      responses: [
+        {
+          text: "Hello! How can I assist you today?",
+          type: "text",
+          probability: 1.0,
+        },
+      ],
+      options: [
+        { text: "how are you", nextNode: "how are you" },
+        { text: "who are you", nextNode: "who are you" },
+      ],
+    },
+    // ... (rest of default script) ...
+  ];
+
+  const [jsonScriptString, setJsonScriptString] = useState(
+    JSON.stringify(defaultScript, null, 2)
+  );
+
   const [avatarPreview, setAvatarPreview] = useState(
     "https://bournemouth-uni-software-engineering-coursework.s3.eu-north-1.amazonaws.com/avatars/default-avatar.png"
   );
@@ -38,15 +64,15 @@ export default function CharacterFormPage() {
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditMode);
 
+  // ... (keep useEffect for fetching character exactly as it was) ...
   useEffect(() => {
-    console.log("isEditMode:", isEditMode);
     if (isEditMode) {
       const fetchCharacter = async () => {
         try {
           setInitialLoading(true);
           const data = await getCharacterAdmin(id);
-          console.log("Fetched character data:", data);
-          if (data) {
+
+          if (data && data.data) {
             setFormData({
               name: data.data.name || "",
               description: data.data.description || "",
@@ -54,11 +80,19 @@ export default function CharacterFormPage() {
               firstMessage: data.data.firstMessage || "",
               isPublic: data.data.isPublic || false,
             });
+
+            if (data.data.jsonScript && Array.isArray(data.data.jsonScript)) {
+              setJsonScriptString(
+                JSON.stringify(data.data.jsonScript, null, 2)
+              );
+            }
+
             if (data.data.avatarUrl) {
               setAvatarPreview(data.data.avatarUrl);
             }
           }
-        } catch {
+        } catch (error) {
+          console.error("Load error:", error);
           toast.error("Failed to load character details.");
           navigate("/dashboard");
         } finally {
@@ -85,24 +119,34 @@ export default function CharacterFormPage() {
     }
   };
 
-  // --- 2. Handle Submit (Dual Logic) ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
+    let validJsonString = jsonScriptString;
+    try {
+      const parsed = JSON.parse(jsonScriptString);
+      if (!Array.isArray(parsed)) {
+        throw new Error("Root must be an array []");
+      }
+      validJsonString = JSON.stringify(parsed);
+    } catch (err) {
+      toast.error("Invalid JSON Script: " + err.message);
+      setLoading(false);
+      return;
+    }
+
     let res;
+    const payload = {
+      ...formData,
+      jsonScript: validJsonString,
+      avatar: avatarFile,
+    };
 
     if (isEditMode) {
-      // Update logic
-      res = await updateCharacter(id, {
-        ...formData,
-        avatar: avatarFile,
-      });
+      res = await updateCharacter(id, payload);
     } else {
-      res = await createCharacter({
-        ...formData,
-        avatar: avatarFile,
-      });
+      res = await createCharacter(payload);
     }
 
     if (res.success) {
@@ -138,7 +182,7 @@ export default function CharacterFormPage() {
           </button>
         </div>
 
-        {/* Page Title - Dynamic Text */}
+        {/* Page Title */}
         <div className="text-center mb-8 mt-2">
           <h1 className="text-3xl font-bold mb-2 text-white">
             {isEditMode ? "Edit Character" : "Create A Character"}
@@ -154,9 +198,11 @@ export default function CharacterFormPage() {
         <div className="card w-full bg-base-700 shadow-lg border border-base-600 rounded-xl">
           <div className="card-body p-6 sm:p-8 gap-6">
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+              {/* ... (Keep existing Avatar, Name, Preview, Text Areas, Script Editor, Visibility toggle) ... */}
+              {/* (I am omitting the middle part of the form for brevity as it is unchanged from your code) */}
+
               {/* --- Top Section: Avatar & Name --- */}
               <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
-                {/* Fixed Image Input */}
                 <div className="flex flex-col items-center gap-3">
                   <div className="avatar group cursor-pointer relative">
                     <div className="w-24 h-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 transition-transform group-hover:scale-105 opacity-75">
@@ -167,8 +213,6 @@ export default function CharacterFormPage() {
                           loading ? "opacity-50" : ""
                         }`}
                       />
-
-                      {/* Overlay */}
                       <label
                         htmlFor="avatar-upload"
                         className={`absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer rounded-full ${
@@ -178,7 +222,6 @@ export default function CharacterFormPage() {
                       </label>
                     </div>
                   </div>
-
                   <label
                     htmlFor="avatar-upload"
                     className={`text-xs font-bold uppercase tracking-wider text-base-content/50 hover:text-primary cursor-pointer transition-colors ${
@@ -186,7 +229,6 @@ export default function CharacterFormPage() {
                     }`}>
                     {isEditMode ? "Change Photo" : "Upload Photo"}
                   </label>
-
                   <input
                     id="avatar-upload"
                     type="file"
@@ -196,8 +238,6 @@ export default function CharacterFormPage() {
                     className="hidden"
                   />
                 </div>
-
-                {/* Name Input */}
                 <div className="form-control flex-1 w-full">
                   <label className="label pt-0">
                     <span className="label-text font-bold text-base text-white">
@@ -230,19 +270,23 @@ export default function CharacterFormPage() {
                     Appearance Preview
                   </span>
                 </div>
-                <CharacterCard
-                  character={{
-                    name: formData.name || "Character Name",
-                    avatarUrl: avatarPreview,
-                    description:
-                      formData.description || "Character Description",
-                  }}
-                />
+                <div className="mockup-phone">
+                  <div className="mockup-phone-camera"></div>
+                  <div className="mockup-phone-display text-white grid place-content-center bg-neutral-900">
+                    <CharacterCard
+                      character={{
+                        name: formData.name || "Character Name",
+                        avatarUrl: avatarPreview,
+                        description:
+                          formData.description || "Character Description",
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="divider my-0 border-base-600/50"></div>
 
-              {/* --- Text Areas --- */}
               <TextAreaField
                 icon={LuFileText}
                 label="Short Description"
@@ -297,7 +341,25 @@ export default function CharacterFormPage() {
                 h="h-24"
               />
 
-              {/* --- Visibility Toggle --- */}
+              <div className="form-control w-full">
+                <TextAreaField
+                  icon={LuCode}
+                  label="Logic Script (JSON)"
+                  sub="Define triggers and responses"
+                  name="jsonScript"
+                  value={jsonScriptString}
+                  onChange={(e) => setJsonScriptString(e.target.value)}
+                  placeholder='[{"triggers": ["hi"], "responses": [...]}]'
+                  disabled={loading}
+                  h="h-80"
+                  className="font-mono text-xs leading-5"
+                />
+                <div className="text-xs text-base-content/50 mt-1 px-1">
+                  Use this to define deterministic logic. Must be a valid JSON
+                  array.
+                </div>
+              </div>
+
               <div
                 className={`form-control bg-base-600/50 p-4 rounded-xl border border-base-600 ${
                   loading ? "opacity-50 pointer-events-none" : ""
@@ -320,7 +382,7 @@ export default function CharacterFormPage() {
                         </>
                       ) : (
                         <>
-                          <LuLock className="text-base-content/50 w-5 h-5" />
+                          <LuLock className="text-base-content/50 w-5 h-5" />{" "}
                           Private Character
                         </>
                       )}
@@ -354,11 +416,15 @@ export default function CharacterFormPage() {
             </form>
           </div>
         </div>
+
+        {/* --- 5. RENDER VECTOR MANAGER IF EDIT MODE --- */}
+        {isEditMode && <VectorStoreManager characterId={id} />}
       </div>
     </section>
   );
 }
 
+// ... TextAreaField component ...
 const TextAreaField = ({
   label,
   sub,

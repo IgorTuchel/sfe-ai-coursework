@@ -25,9 +25,10 @@ export async function handlerSendChatMessage(req, res) {
     throw new BadRequestError("Message content is required.");
   }
 
-  if (message.length > 2048) {
+  if (message.length > 512) {
+    console.log("Message length:", message.length);
     throw new BadRequestError(
-      "Message exceeds maximum length of 2048 characters."
+      "Message exceeds maximum length of 512 characters."
     );
   }
 

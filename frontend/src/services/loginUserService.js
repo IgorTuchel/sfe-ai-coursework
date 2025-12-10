@@ -3,10 +3,16 @@ import api from "../lib/api";
 export const login = async (
   email,
   password,
-  rememberMe = "false",
+  rememberMe = false,
   mfaCode = ""
 ) => {
   try {
+    if (rememberMe !== true && rememberMe !== false) {
+      return {
+        success: false,
+        message: "Remember me must be a boolean.",
+      };
+    }
     const res = await api.post("/users/login", {
       email,
       password,

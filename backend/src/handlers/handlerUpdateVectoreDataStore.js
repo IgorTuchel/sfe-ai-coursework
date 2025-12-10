@@ -8,12 +8,8 @@ import { HTTPCodes, respondWithJson } from "../utils/json.js";
 
 export async function handlerUpdateVectorDataStore(req, res) {
   const dataArray = req.body.dataArray;
-  const characterID = req.params.id;
+  const characterID = req.params.characterID;
   const dataVectorStoreId = req.params.dataVectorStoreId;
-
-  if (!characterID) {
-    throw new BadRequestError("Character ID is required.");
-  }
 
   const character = await CharacterVectorStore.findOne({
     characterID: characterID,

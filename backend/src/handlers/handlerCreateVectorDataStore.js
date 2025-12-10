@@ -9,7 +9,7 @@ import { HTTPCodes, respondWithJson } from "../utils/json.js";
 
 export async function handlerCreateVectorDataStore(req, res) {
   const dataArray = req.body.dataArray;
-  const characterID = req.params.id;
+  const characterID = req.params.characterID;
 
   const character = await Character.findById(characterID);
   if (!character) {
@@ -26,17 +26,23 @@ export async function handlerCreateVectorDataStore(req, res) {
       "Error getting embeddings: " + embeddingRespone.error
     );
   }
-
+  let createdObjects = [];
   for (const vectorData of embeddingRespone.data) {
     let dataStore = {
       characterID: characterID,
       embedding: vectorData.embedding,
       text: vectorData.text,
     };
-    await CharacterVectorStore.create(dataStore);
+    const createdObject = await CharacterVectorStore.create(dataStore);
+    createdObjects.push({
+      _id: createdObject._id,
+      characterID: createdObject.characterID,
+      text: createdObject.text,
+    });
   }
 
   return respondWithJson(res, HTTPCodes.OK, {
     message: `${embeddingRespone.data.length} Vector data stores created successfully for character ${characterID}.`,
+    data: createdObjects,
   });
 }

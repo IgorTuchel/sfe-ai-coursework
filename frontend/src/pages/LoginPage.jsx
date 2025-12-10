@@ -55,7 +55,7 @@ export default function LoginPage() {
   const loginFlow = async (code) => {
     setLoading(true);
     console.log("Starting login flow...");
-    const res = await login(email, password, rememberMe.toString(), code || "");
+    const res = await login(email, password, rememberMe, code || "");
     if (res.mfaRequired) {
       toast.success("MFA code required. Please enter your code.");
       setShowMfaModal(true);
@@ -105,7 +105,7 @@ export default function LoginPage() {
               Sign in to your History.ai account
             </p>
 
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit}>
               <div className="form-control">
                 <label className="label">
                   <span className="label-text font-semibold text-primary">
@@ -191,7 +191,7 @@ export default function LoginPage() {
               <div className="form-control mt-6">
                 <button
                   className="btn btn-primary bg-primary rounded-2xl text-primary-100 border-0 w-full text-lg shadow-lg shadow-primary/20"
-                  onClick={handleSubmit}
+                  type="submit"
                   disabled={loading}
                   aria-label="Login Button">
                   Login

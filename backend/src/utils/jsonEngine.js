@@ -11,6 +11,10 @@ function levenshteinDistance(a, b) {
 
   if (a.length < b.length) [a, b] = [b, a];
 
+  if (a.length > 100 || b.length > 100) {
+    return Math.max(a.length, b.length);
+  }
+
   let prevRow = [];
   let currentRow = [];
 
@@ -50,7 +54,7 @@ export function getResponseFromJsonScript(jsonScript, message) {
     .replace(/[^\w\s]/g, "")
     .trim();
 
-  if (cleanMessage.length > 100) {
+  if (cleanMessage.length > 80) {
     return null;
   }
 

@@ -23,6 +23,15 @@ const optionSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const scriptNode = new mongoose.Schema(
+  {
+    triggers: { type: [String], required: true },
+    responses: { type: [responseSchema], required: true },
+    options: { type: [optionSchema], required: true },
+  },
+  { _id: false }
+);
+
 const characterSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
@@ -37,13 +46,7 @@ const characterSchema = new mongoose.Schema(
     firstMessage: { type: String, required: false, default: "" },
     isPublic: { type: Boolean, default: false },
     jsonScript: {
-      type: [
-        {
-          triggers: { type: [String], required: true },
-          responses: { type: [responseSchema], required: true },
-          options: { type: [optionSchema], required: true },
-        },
-      ],
+      type: [scriptNode],
       default: [
         {
           triggers: ["hi", "hello", "hey", "greetings"],
