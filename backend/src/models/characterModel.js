@@ -1,6 +1,28 @@
 import mongoose from "mongoose";
 import CharacterVectorStore from "./characterVectorDataStore.js";
 
+const responseSchema = new mongoose.Schema(
+  {
+    text: { type: String, required: true },
+    type: {
+      type: String,
+      enum: ["text", "image"],
+      default: "text",
+      required: true,
+    },
+    probability: { type: Number, required: true, default: 1.0 },
+  },
+  { _id: false }
+);
+
+const optionSchema = new mongoose.Schema(
+  {
+    text: { type: String, required: true },
+    nextNode: { type: String, required: true },
+  },
+  { _id: false }
+);
+
 const characterSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
@@ -14,6 +36,53 @@ const characterSchema = new mongoose.Schema(
     systemPrompt: { type: String, required: false, default: "" },
     firstMessage: { type: String, required: false, default: "" },
     isPublic: { type: Boolean, default: false },
+    jsonScript: {
+      type: [
+        {
+          triggers: { type: [String], required: true },
+          responses: { type: [responseSchema], required: true },
+          options: { type: [optionSchema], required: true },
+        },
+      ],
+      default: [
+        {
+          triggers: ["hi", "hello", "hey", "greetings"],
+          responses: [
+            {
+              text: "Hello! How can I assist you today?",
+              type: "text",
+              probability: 1.0,
+            },
+          ],
+          options: [
+            { text: "how are you", nextNode: "how are you" },
+            { text: "who are you", nextNode: "who are you" },
+          ],
+        },
+        {
+          triggers: ["how are you"],
+          responses: [
+            {
+              text: "I'm just a bunch of code, but thanks for asking!",
+              type: "text",
+              probability: 1.0,
+            },
+          ],
+          options: [],
+        },
+        {
+          triggers: ["who are you"],
+          responses: [
+            {
+              text: "I'm your friendly AI character, here to chat with you!",
+              type: "text",
+              probability: 1.0,
+            },
+          ],
+          options: [],
+        },
+      ],
+    },
     ownerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

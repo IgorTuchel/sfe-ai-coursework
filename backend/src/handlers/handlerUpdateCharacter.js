@@ -10,13 +10,37 @@ import cfg from "../config/config.js";
 import { invalidateCharacterCache } from "../services/characterContextManager.js";
 
 export async function handlerUpdateCharacter(req, res) {
-  const { name, description, systemPrompt, firstMessage, isPublic } = req.body;
+  const {
+    name,
+    description,
+    systemPrompt,
+    firstMessage,
+    isPublic,
+    jsonScript,
+  } = req.body;
+
   const characterID = req.params.id;
   let avatarUrl = null;
 
   const dbCharacter = await Character.findById(characterID);
   if (!dbCharacter) {
     throw new NotFoundError("Character not found");
+  }
+
+  let parsedJsonScript = undefined;
+  if (jsonScript) {
+    console.log("Parsing JSON script:", jsonScript);
+    if (typeof jsonScript === "string") {
+      try {
+        parsedJsonScript = JSON.parse(jsonScript);
+      } catch (err) {
+        throw new BadRequestError("Invalid JSON script format");
+      }
+    } else if (typeof jsonScript === "object") {
+      parsedJsonScript = jsonScript;
+    } else {
+      throw new BadRequestError("Invalid JSON script format");
+    }
   }
 
   if (req.file) {
@@ -48,6 +72,7 @@ export async function handlerUpdateCharacter(req, res) {
     description: description || dbCharacter.description,
     systemPrompt: systemPrompt || dbCharacter.systemPrompt,
     firstMessage: firstMessage || dbCharacter.firstMessage,
+    jsonScript: parsedJsonScript || dbCharacter.jsonScript,
     isPublic: isPublic !== undefined ? isPublic : dbCharacter.isPublic,
     avatarUrl: avatarUrl || dbCharacter.avatarUrl,
   };
@@ -62,15 +87,18 @@ export async function handlerUpdateCharacter(req, res) {
     );
   }
 
-  const updatedCharacter = await Character.findByIdAndUpdate(
-    characterID,
-    changes,
-    { new: true }
-  );
-
-  respondWithJson(res, HTTPCodes.OK, {
-    character: updatedCharacter,
-  });
+  try {
+    const updatedCharacter = await Character.findByIdAndUpdate(
+      characterID,
+      changes,
+      { new: true, runValidators: true }
+    );
+    respondWithJson(res, HTTPCodes.OK, {
+      character: updatedCharacter,
+    });
+  } catch (error) {
+    throw new BadRequestError("Error updating character: " + error.message);
+  }
 
   invalidateCharacterCache(characterID);
 }

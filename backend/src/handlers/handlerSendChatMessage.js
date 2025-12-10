@@ -14,6 +14,7 @@ import { HTTPCodes, respondWithJson } from "../utils/json.js";
 import { callGemini } from "../services/callGemini.js";
 import { getCharacterInformation } from "../services/characterContextManager.js";
 import User from "../models/usersModel.js";
+import { getResponseFromJsonScript } from "../utils/jsonEngine.js";
 
 export async function handlerSendChatMessage(req, res) {
   const userID = req.user.id;
@@ -39,6 +40,45 @@ export async function handlerSendChatMessage(req, res) {
     throw new ForbiddenError("You do not have permission to access this chat.");
   }
 
+  const characterInfo = await getCharacterInformation(chatDB.characterID);
+  if (!characterInfo) {
+    throw new BadRequestError("Failed to retrieve character information.");
+  }
+
+  // The json Engine handling starts here
+  const jsonScript = characterInfo.jsonScript;
+  if (jsonScript) {
+    const jsonRes = getResponseFromJsonScript(jsonScript, message);
+    if (jsonRes) {
+      await Chat.findByIdAndUpdate(
+        chatID,
+        {
+          $push: {
+            messages: [
+              { role: "user", content: message, timestamp: new Date() },
+              { role: "system", content: jsonRes.text, timestamp: new Date() },
+            ],
+          },
+        },
+        { new: true }
+      );
+
+      addToContextData(chatID, {
+        userQuestion: message,
+        aiAnswer: jsonRes.text,
+      });
+
+      return respondWithJson(res, HTTPCodes.OK, {
+        content: jsonRes.text,
+        role: "system",
+        type: jsonRes.type,
+        options: jsonRes.options,
+        timestamp: new Date(),
+      });
+    }
+  }
+  // If the json Engine did not return a response, continue with the AI RAG Pipelien
+
   const context = await getContextData(chatID);
   if (!context) {
     throw new BadRequestError("Failed to retrieve chat context.");
@@ -56,8 +96,8 @@ export async function handlerSendChatMessage(req, res) {
     message,
     userMessageEmbedding.data[0].embedding
   );
+
   const userNameDB = await User.findById(userID).select("username");
-  const characterInfo = await getCharacterInformation(chatDB.characterID);
   const systemPrompt = characterInfo.systemPrompt
     .replace("{CONVERSATION_CONTEXT}", context.join("\n"))
     .replace(
@@ -65,7 +105,6 @@ export async function handlerSendChatMessage(req, res) {
       vectorQueryResponse.map((item) => item.text).join("\n")
     )
     .replace("{USERNAME}", userNameDB.username);
-  console.log("System Prompt:", systemPrompt);
 
   const aiResponse = await callGemini(systemPrompt, message);
   if (!aiResponse.success) {
@@ -93,6 +132,8 @@ export async function handlerSendChatMessage(req, res) {
   return respondWithJson(res, HTTPCodes.OK, {
     content: aiResponse.data,
     role: "system",
+    type: "text",
+    options: null,
     timestamp: new Date(),
   });
 }

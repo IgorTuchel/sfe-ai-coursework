@@ -21,11 +21,11 @@ export async function handlerLogIn(req, res) {
     throw new BadRequestError("Email and password are required.");
   }
 
-  if (typeof rememberMe !== "string") {
-    throw new BadRequestError("RememberMe must exist.");
+  if (typeof rememberMe !== "boolean") {
+    throw new BadRequestError("RememberMe must exist and be a boolean.");
   }
   if (typeof mfaCode !== "string") {
-    throw new BadRequestError("MFA code must exist.");
+    throw new BadRequestError("MFA code must exist and be a string.");
   }
 
   const cleanEmail = sanitiseInputEmail(email);
@@ -51,7 +51,7 @@ export async function handlerLogIn(req, res) {
     }
   }
 
-  if (rememberMe === "true") {
+  if (rememberMe === true) {
     const refreshToken = await makeRefreshToken(dbUser._id);
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,

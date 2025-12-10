@@ -6,9 +6,32 @@ import { fileTypeFromBuffer } from "file-type";
 import { uploadObjectToS3 } from "../services/putObjectS3.js";
 import cfg from "../config/config.js";
 export async function handlerCreateCharacter(req, res) {
-  const { name, description, systemPrompt, firstMessage, isPublic } = req.body;
+  const {
+    name,
+    description,
+    systemPrompt,
+    firstMessage,
+    isPublic,
+    jsonScript,
+  } = req.body;
   if (!name) {
     throw new BadRequestError("Character name is required");
+  }
+
+  let parsedJsonScript = undefined;
+  if (jsonScript) {
+    console.log("Parsing JSON script:", jsonScript);
+    if (typeof jsonScript === "string") {
+      try {
+        parsedJsonScript = JSON.parse(jsonScript);
+      } catch (err) {
+        throw new BadRequestError("Invalid JSON script format");
+      }
+    } else if (typeof jsonScript === "object") {
+      parsedJsonScript = jsonScript;
+    } else {
+      throw new BadRequestError("Invalid JSON script format");
+    }
   }
 
   let avatarUrl = null;
@@ -43,11 +66,15 @@ export async function handlerCreateCharacter(req, res) {
     systemPrompt,
     firstMessage,
     isPublic,
+    jsonScript: parsedJsonScript,
     ownerId: req.user.id,
   });
-
-  const savedCharacter = await newCharacter.save();
-  respondWithJson(res, HTTPCodes.OK, {
-    character: savedCharacter,
-  });
+  try {
+    const savedCharacter = await newCharacter.save();
+    respondWithJson(res, HTTPCodes.OK, {
+      character: savedCharacter,
+    });
+  } catch (error) {
+    throw new BadRequestError("Error creating character: " + error.message);
+  }
 }
