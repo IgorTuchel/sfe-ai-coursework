@@ -7,6 +7,7 @@ import { signUp } from "../services/signUpUserService";
 import EmailInput from "../components/forms/EmailInput.jsx";
 import PasswordInput from "../components/forms/PasswordInput.jsx";
 import { validateEmail } from "../utils/validation.js";
+import UsernameInput from "../components/forms/UsernameInput.jsx";
 
 export default function SignupPage() {
   const [username, setUsername] = useState("");
@@ -76,26 +77,11 @@ export default function SignupPage() {
           </p>
 
           <form className="space-y-4" onSubmit={handleSubmit}>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text font-semibold text-primary">
-                  Username
-                </span>
-              </label>
-              <label className="input input-bordered w-full rounded-2xl mt-2 flex items-center gap-2 focus-within:input-primary bg-base-700">
-                <LuUser className="h-[1em] opacity-75" aria-hidden="true" />
-                <input
-                  type="text"
-                  placeholder="Your Username"
-                  required
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  disabled={loading}
-                  aria-label="Username"
-                  className="grow text-white placeholder:text-gray-500 bg-transparent outline-none border-none"
-                />
-              </label>
-            </div>
+            <UsernameInput
+              value={username}
+              onChange={setUsername}
+              disabled={loading}
+            />
 
             <EmailInput value={email} onChange={setEmail} disabled={loading} />
 

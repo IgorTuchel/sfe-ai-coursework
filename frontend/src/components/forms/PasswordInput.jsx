@@ -16,12 +16,15 @@ export default function PasswordInput({
 
   return (
     <div className="form-control">
-      <label className="label">
+      <label
+        htmlFor={`password-${label.toLowerCase().replace(/\s+/g, "-")}`}
+        className="label">
         <span className="label-text font-semibold text-primary">{label}</span>
       </label>
-      <label className="input input-bordered w-full bg-base-700 rounded-2xl mt-2 flex items-center gap-2 focus-within:input-primary">
+      <div className="input input-bordered w-full bg-base-700 rounded-2xl mt-2 flex items-center gap-2 focus-within:input-primary">
         <LuKeyRound className="h-[1em] opacity-75" aria-hidden="true" />
         <input
+          id={`password-${label.toLowerCase().replace(/\s+/g, "-")}`}
           type={showPassword ? "text" : "password"}
           placeholder={placeholder}
           required
@@ -44,7 +47,7 @@ export default function PasswordInput({
             <LuEye className="opacity-75 h-[1em]" aria-hidden="true" />
           )}
         </button>
-      </label>
+      </div>
       {showRequirements && value && (
         <PasswordRequirements
           password={value}
