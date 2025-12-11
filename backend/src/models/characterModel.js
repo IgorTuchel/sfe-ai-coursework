@@ -1,6 +1,26 @@
 import mongoose from "mongoose";
 import CharacterVectorStore from "./characterVectorDataStore.js";
 
+const themeSchema = new mongoose.Schema(
+  {
+    backgroundColor: { type: String, default: "" },
+    fontFamily: { type: String, default: "" },
+    backgroundImageUrl: { type: String, default: "" },
+    backgroundOverlayOpacity: { type: Number, default: 0.5 },
+    primaryColor: { type: String, default: "" },
+    userMessageColor: { type: String, default: "" },
+    secondaryColor: { type: String, default: "" },
+    systemMessageColor: { type: String, default: "" },
+    bubbleOpacity: { type: Number, default: 1 },
+    bubbleBorderRadius: { type: String, default: "" },
+    inputBackgroundColor: { type: String, default: "" },
+    inputTextColor: { type: String, default: "" },
+    inputBorderColor: { type: String, default: "" },
+    sendButtonColor: { type: String, default: "" },
+  },
+  { _id: false }
+);
+
 const responseSchema = new mongoose.Schema(
   {
     text: { type: String, required: true },
@@ -45,6 +65,7 @@ const characterSchema = new mongoose.Schema(
     systemPrompt: { type: String, required: false, default: "" },
     firstMessage: { type: String, required: false, default: "" },
     isPublic: { type: Boolean, default: false },
+    theme: { type: themeSchema, default: () => ({}) },
     jsonScript: {
       type: [scriptNode],
       default: [

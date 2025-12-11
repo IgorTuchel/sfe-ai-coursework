@@ -16,6 +16,15 @@ export async function errorHandlingMiddleware(err, req, res, next) {
     }
     return respondWithErrorJson(res, err.statusCode, err.message);
   }
+
+  if (err.code === "LIMIT_FILE_SIZE") {
+    return respondWithErrorJson(
+      res,
+      HTTPCodes.BAD_REQUEST,
+      "File size exceeds the maximum allowed limit."
+    );
+  }
+
   console.error(
     `Unexpected error details can be found at: ${cfg.errorLogFile}`
   );

@@ -12,7 +12,7 @@ import { NavbarProvider } from "./context/NavbarContext.jsx";
 import { Toaster } from "react-hot-toast";
 import CreateCharacterPage from "./pages/CreateCharacterPage.jsx";
 import DashboardLandingPage from "./pages/DashboardLandingPage.jsx";
-
+import UserSettingsPage from "./pages/UserSettings.jsx";
 function App() {
   return (
     <AuthProvider>
@@ -37,6 +37,7 @@ function App() {
               path="/dashboard/characters/create/:id"
               element={<CreateCharacterPage />}
             />
+            <Route path="/dashboard/profile" element={<UserSettingsPage />} />
           </Route>
         </Routes>
       </NavbarProvider>

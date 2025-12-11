@@ -1,25 +1,44 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
-  LuUpload,
-  LuUser,
+  LuArrowLeft,
   LuFileText,
   LuMessageSquare,
-  LuGlobe,
-  LuLock,
-  LuArrowLeft,
-  LuInfo,
-  LuEye,
-  LuCode,
+  LuTrash2,
 } from "react-icons/lu";
-import { createCharacter } from "../services/createCharacterService";
 import toast from "react-hot-toast";
-import CharacterCard from "../components/CharacterCard";
+
+import { createCharacter } from "../services/createCharacterService";
 import { getCharacterAdmin } from "../services/getCharacterService";
 import { updateCharacter } from "../services/updateCharacterService";
-
-// --- IMPORT THE NEW COMPONENT ---
+import { deleteCharacter as deleteCharacterService } from "../services/deleteCharacterService"; // ADD THIS IMPORT
+import TextAreaField from "../components/characterEditor/TextAreaField";
+import VisibilityToggle from "../components/characterEditor/VisibilityToggle";
 import VectorStoreManager from "../components/VectorStoreManager";
+import AvatarUploadSection from "../components/characterEditor/AvatarUploadSection";
+import SystemPromptField from "../components/characterEditor/SystemPromptField";
+import JsonScriptEditor from "../components/characterEditor/JsonScriptEditor";
+import ThemeEditor from "../components/characterEditor/ThemeEditor";
+
+const DEFAULT_AVATAR =
+  "https://bournemouth-uni-software-engineering-coursework.s3.eu-north-1.amazonaws.com/avatars/default-avatar.png";
+
+const DEFAULT_SCRIPT = [
+  {
+    triggers: ["hi", "hello", "hey", "greetings"],
+    responses: [
+      {
+        text: "Hello! How can I assist you today?",
+        type: "text",
+        probability: 1.0,
+      },
+    ],
+    options: [
+      { text: "how are you", nextNode: "how are you" },
+      { text: "who are you", nextNode: "who are you" },
+    ],
+  },
+];
 
 export default function CharacterFormPage() {
   const { id } = useParams();
@@ -34,37 +53,19 @@ export default function CharacterFormPage() {
     isPublic: false,
   });
 
-  // ... (keep defaultScript and jsonScriptString state exactly as they were) ...
-  const defaultScript = [
-    {
-      triggers: ["hi", "hello", "hey", "greetings"],
-      responses: [
-        {
-          text: "Hello! How can I assist you today?",
-          type: "text",
-          probability: 1.0,
-        },
-      ],
-      options: [
-        { text: "how are you", nextNode: "how are you" },
-        { text: "who are you", nextNode: "who are you" },
-      ],
-    },
-    // ... (rest of default script) ...
-  ];
-
   const [jsonScriptString, setJsonScriptString] = useState(
-    JSON.stringify(defaultScript, null, 2)
+    JSON.stringify(DEFAULT_SCRIPT, null, 2)
   );
 
-  const [avatarPreview, setAvatarPreview] = useState(
-    "https://bournemouth-uni-software-engineering-coursework.s3.eu-north-1.amazonaws.com/avatars/default-avatar.png"
-  );
+  const [avatarPreview, setAvatarPreview] = useState(DEFAULT_AVATAR);
   const [avatarFile, setAvatarFile] = useState(null);
+
+  const [themeData, setThemeData] = useState(null);
+  const [backgroundImageFile, setBackgroundImageFile] = useState(null);
+
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditMode);
 
-  // ... (keep useEffect for fetching character exactly as it was) ...
   useEffect(() => {
     if (isEditMode) {
       const fetchCharacter = async () => {
@@ -85,6 +86,12 @@ export default function CharacterFormPage() {
               setJsonScriptString(
                 JSON.stringify(data.data.jsonScript, null, 2)
               );
+            } else {
+              setJsonScriptString(JSON.stringify(DEFAULT_SCRIPT, null, 2));
+            }
+
+            if (data.data.theme) {
+              setThemeData(data.data.theme);
             }
 
             if (data.data.avatarUrl) {
@@ -100,6 +107,8 @@ export default function CharacterFormPage() {
         }
       };
       fetchCharacter();
+    } else {
+      setInitialLoading(false);
     }
   }, [id, isEditMode, navigate]);
 
@@ -111,11 +120,40 @@ export default function CharacterFormPage() {
     }));
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setAvatarPreview(URL.createObjectURL(file));
-      setAvatarFile(file);
+  const handleAvatarChange = (file) => {
+    setAvatarPreview(URL.createObjectURL(file));
+    setAvatarFile(file);
+  };
+
+  const handleThemeChange = (updatedTheme, bgFile) => {
+    setThemeData(updatedTheme);
+    setBackgroundImageFile(bgFile);
+  };
+
+  // FIXED: Delete handler
+  const handleDeleteCharacter = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this character? This action cannot be undone."
+    );
+
+    if (!confirmed) return;
+
+    setLoading(true);
+    try {
+      const res = await deleteCharacterService(id);
+      window.location.href = "/dashboard"; // Navigate doesnt work for some reason
+      if (res.success) {
+        toast.success("Character deleted successfully.");
+      } else {
+        toast.error(
+          "Error deleting character: " + (res.error || "Unknown error")
+        );
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error("Failed to delete character");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -123,38 +161,49 @@ export default function CharacterFormPage() {
     e.preventDefault();
     setLoading(true);
 
+    if (!jsonScriptString) {
+      toast.error("Please provide a JSON script");
+      setLoading(false);
+      return;
+    }
+
     let validJsonString = jsonScriptString;
     try {
       const parsed = JSON.parse(jsonScriptString);
       if (!Array.isArray(parsed)) {
-        throw new Error("Root must be an array []");
+        throw new Error("Json root must be an array []");
       }
-      validJsonString = JSON.stringify(parsed);
+      validJsonString = JSON.stringify(parsed, null, 2);
     } catch (err) {
       toast.error("Invalid JSON Script: " + err.message);
       setLoading(false);
       return;
     }
 
-    let res;
     const payload = {
       ...formData,
       jsonScript: validJsonString,
       avatar: avatarFile,
     };
 
-    if (isEditMode) {
-      res = await updateCharacter(id, payload);
-    } else {
-      res = await createCharacter(payload);
+    if (isEditMode && themeData) {
+      payload.theme = JSON.stringify(themeData);
+      if (backgroundImageFile) {
+        payload.backgroundImage = backgroundImageFile;
+      }
     }
+
+    const res = isEditMode
+      ? await updateCharacter(id, payload)
+      : await createCharacter(payload);
 
     if (res.success) {
       toast.success(
         `Character ${isEditMode ? "updated" : "created"} successfully!`
       );
       if (!isEditMode) {
-        navigate("/dashboard");
+        navigate("/dashboard/characters/create/" + res.data._id);
+        toast.success("You can now edit the character details further.");
       }
     } else {
       toast.error(`Error: ${res.error}`);
@@ -173,16 +222,25 @@ export default function CharacterFormPage() {
   return (
     <section className="w-full h-full overflow-y-auto bg-base-100 scrollbar-thin scrollbar-thumb-base-600 scrollbar-track-transparent">
       <div className="flex flex-col items-center px-4 py-6 sm:w-4/5 xl:w-3/5 sm:mx-auto w-full">
-        {/* Navigation */}
-        <div className="w-full mb-2">
-          <button
-            onClick={() => navigate("/dashboard")}
-            className="flex items-center gap-2 text-sm text-base-content/70 hover:text-primary transition-colors w-fit">
+        <div className="w-full mb-2 flex items-center justify-between">
+          <a
+            href="/dashboard"
+            className="flex items-center gap-2 text-sm text-base-content/70 hover:text-primary transition-colors">
             <LuArrowLeft className="w-6 h-6" /> Back to Admin Dashboard
-          </button>
+          </a>
+          {/* MOVED: Delete button to top right */}
+          {isEditMode && (
+            <button
+              onClick={handleDeleteCharacter}
+              disabled={loading}
+              className="btn btn-error btn-sm gap-2"
+              aria-label="Delete Character Button">
+              <LuTrash2 className="w-4 h-4" />
+              Delete
+            </button>
+          )}
         </div>
 
-        {/* Page Title */}
         <div className="text-center mb-8 mt-2">
           <h1 className="text-3xl font-bold mb-2 text-white">
             {isEditMode ? "Edit Character" : "Create A Character"}
@@ -194,96 +252,17 @@ export default function CharacterFormPage() {
           </p>
         </div>
 
-        {/* Main Form Card */}
         <div className="card w-full bg-base-700 shadow-lg border border-base-600 rounded-xl">
           <div className="card-body p-6 sm:p-8 gap-6">
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-              {/* ... (Keep existing Avatar, Name, Preview, Text Areas, Script Editor, Visibility toggle) ... */}
-              {/* (I am omitting the middle part of the form for brevity as it is unchanged from your code) */}
-
-              {/* --- Top Section: Avatar & Name --- */}
-              <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
-                <div className="flex flex-col items-center gap-3">
-                  <div className="avatar group cursor-pointer relative">
-                    <div className="w-24 h-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 transition-transform group-hover:scale-105 opacity-75">
-                      <img
-                        src={avatarPreview}
-                        alt="Preview"
-                        className={`object-cover h-full w-full ${
-                          loading ? "opacity-50" : ""
-                        }`}
-                      />
-                      <label
-                        htmlFor="avatar-upload"
-                        className={`absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer rounded-full ${
-                          loading ? "pointer-events-none" : ""
-                        }`}>
-                        <LuUpload className="w-8 h-8 text-white" />
-                      </label>
-                    </div>
-                  </div>
-                  <label
-                    htmlFor="avatar-upload"
-                    className={`text-xs font-bold uppercase tracking-wider text-base-content/50 hover:text-primary cursor-pointer transition-colors ${
-                      loading ? "opacity-50 pointer-events-none" : ""
-                    }`}>
-                    {isEditMode ? "Change Photo" : "Upload Photo"}
-                  </label>
-                  <input
-                    id="avatar-upload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    disabled={loading}
-                    className="hidden"
-                  />
-                </div>
-                <div className="form-control flex-1 w-full">
-                  <label className="label pt-0">
-                    <span className="label-text font-bold text-base text-white">
-                      Character Name *
-                    </span>
-                  </label>
-                  <label className="input input-bordered outline-primary flex items-center gap-3 bg-base-600 border-base-600 focus-within:border-primary text-base-content/90 rounded-xl opacity-75">
-                    <LuUser className="w-5 h-5 opacity-60" />
-                    <input
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      placeholder="e.g. Napoleon Bonaparte"
-                      disabled={loading}
-                      required
-                      className="grow placeholder:text-base-content/40 bg-transparent disabled:opacity-50"
-                    />
-                  </label>
-                </div>
-              </div>
-
-              {/* Preview Card */}
-              <div
-                className={`w-full bg-base-600/30 rounded-xl p-4 border border-base-600/50 mt-2 ${
-                  loading ? "opacity-50" : ""
-                }`}>
-                <div className="flex items-center gap-2 mb-3 text-base-content/60">
-                  <LuEye className="w-4 h-4" />
-                  <span className="text-xs font-bold uppercase tracking-wider">
-                    Appearance Preview
-                  </span>
-                </div>
-                <div className="mockup-phone">
-                  <div className="mockup-phone-camera"></div>
-                  <div className="mockup-phone-display text-white grid place-content-center bg-neutral-900">
-                    <CharacterCard
-                      character={{
-                        name: formData.name || "Character Name",
-                        avatarUrl: avatarPreview,
-                        description:
-                          formData.description || "Character Description",
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
+              <AvatarUploadSection
+                avatarPreview={avatarPreview}
+                onAvatarChange={handleAvatarChange}
+                name={formData.name}
+                onNameChange={handleInputChange}
+                disabled={loading}
+                isEditMode={isEditMode}
+              />
 
               <div className="divider my-0 border-base-600/50"></div>
 
@@ -298,36 +277,11 @@ export default function CharacterFormPage() {
                 h="h-24"
               />
 
-              <div className="form-control w-full">
-                <TextAreaField
-                  label="System Prompt (Personality)"
-                  name="systemPrompt"
-                  value={formData.systemPrompt}
-                  onChange={handleInputChange}
-                  placeholder="You are Napoleon..."
-                  disabled={loading}
-                  h="h-40"
-                  className="font-mono text-sm"
-                />
-                <div
-                  className={`alert bg-base-600/50 border border-base-600/50 p-3 rounded-lg flex items-start text-xs sm:text-sm mt-2 ${
-                    loading ? "opacity-50" : ""
-                  }`}>
-                  <LuInfo className="w-5 h-5 text-warning shrink-0 mt-0.5" />
-                  <div className="flex flex-col gap-1">
-                    <span className="font-semibold text-white">
-                      Required Template Tags
-                    </span>
-                    <span className="text-base-content/70">
-                      Must include:{" "}
-                      <code className="font-mono text-xs p-1 rounded text-primary">
-                        {"{RETRIVED_RELEVANT_DATA}"}, {"{CONVERSATION_CONTEXT}"}
-                        , {"{USERNAME}"}
-                      </code>
-                    </span>
-                  </div>
-                </div>
-              </div>
+              <SystemPromptField
+                value={formData.systemPrompt}
+                onChange={handleInputChange}
+                disabled={loading}
+              />
 
               <TextAreaField
                 icon={LuMessageSquare}
@@ -341,65 +295,33 @@ export default function CharacterFormPage() {
                 h="h-24"
               />
 
-              <div className="form-control w-full">
-                <TextAreaField
-                  icon={LuCode}
-                  label="Logic Script (JSON)"
-                  sub="Define triggers and responses"
-                  name="jsonScript"
-                  value={jsonScriptString}
-                  onChange={(e) => setJsonScriptString(e.target.value)}
-                  placeholder='[{"triggers": ["hi"], "responses": [...]}]'
-                  disabled={loading}
-                  h="h-80"
-                  className="font-mono text-xs leading-5"
-                />
-                <div className="text-xs text-base-content/50 mt-1 px-1">
-                  Use this to define deterministic logic. Must be a valid JSON
-                  array.
-                </div>
-              </div>
+              <JsonScriptEditor
+                value={jsonScriptString}
+                onChange={(e) => setJsonScriptString(e.target.value)}
+                disabled={loading}
+              />
 
-              <div
-                className={`form-control bg-base-600/50 p-4 rounded-xl border border-base-600 ${
-                  loading ? "opacity-50 pointer-events-none" : ""
-                }`}>
-                <label className="label cursor-pointer justify-start gap-4">
-                  <input
-                    type="checkbox"
-                    name="isPublic"
-                    checked={formData.isPublic}
-                    onChange={handleInputChange}
+              <VisibilityToggle
+                isPublic={formData.isPublic}
+                onChange={handleInputChange}
+                disabled={loading}
+              />
+
+              {isEditMode && (
+                <>
+                  <div className="divider my-0 border-base-600/50"></div>
+                  <ThemeEditor
+                    initialTheme={themeData || {}}
+                    onThemeChange={handleThemeChange}
                     disabled={loading}
-                    className="toggle toggle-primary toggle-lg"
                   />
-                  <div>
-                    <div className="flex items-center gap-2 font-bold text-white">
-                      {formData.isPublic ? (
-                        <>
-                          <LuGlobe className="text-primary w-5 h-5" /> Public
-                          Character
-                        </>
-                      ) : (
-                        <>
-                          <LuLock className="text-base-content/50 w-5 h-5" />{" "}
-                          Private Character
-                        </>
-                      )}
-                    </div>
-                    <span className="text-xs text-base-content/60 mt-1">
-                      {formData.isPublic
-                        ? "Visible to all users."
-                        : "Only visible to you."}
-                    </span>
-                  </div>
-                </label>
-              </div>
+                </>
+              )}
 
               <button
                 type="submit"
                 disabled={loading}
-                className={`btn btn-primary btn-lg w-full rounded-xl shadow-lg mt-2 text-base-100 border-0 hover:brightness-110`}
+                className="btn btn-primary btn-lg w-full rounded-xl shadow-lg mt-2 text-base-100 border-0 hover:brightness-110"
                 aria-label={
                   isEditMode
                     ? "Update Character Button"
@@ -417,45 +339,8 @@ export default function CharacterFormPage() {
           </div>
         </div>
 
-        {/* --- 5. RENDER VECTOR MANAGER IF EDIT MODE --- */}
         {isEditMode && <VectorStoreManager characterId={id} />}
       </div>
     </section>
   );
 }
-
-// ... TextAreaField component ...
-const TextAreaField = ({
-  label,
-  sub,
-  icon: Icon,
-  h,
-  disabled = false,
-  className = "",
-  ...props
-}) => (
-  <div className="form-control w-full">
-    <label className="label">
-      <span className="label-text font-bold text-base text-white">{label}</span>
-      {sub && <span className="label-text-alt opacity-60">{sub}</span>}
-    </label>
-    <div className="relative">
-      {Icon && (
-        <Icon
-          className={`absolute top-3 left-3 w-5 h-5 opacity-50 z-10 pointer-events-none ${
-            disabled ? "opacity-25" : ""
-          }`}
-        />
-      )}
-      <textarea
-        className={`textarea w-full bg-base-600 border-base-600 focus:border-primary rounded-xl text-base leading-relaxed placeholder:text-base-content/40 focus:outline-none border ${h} ${
-          Icon ? "pl-10" : ""
-        } ${
-          disabled ? "opacity-50 disabled:cursor-not-allowed" : ""
-        } ${className}`}
-        disabled={disabled}
-        {...props}
-      />
-    </div>
-  </div>
-);

@@ -46,7 +46,10 @@ router.put(
   "/:id",
   authRoute,
   adminRoute,
-  upload.single("avatar"),
+  upload.fields([
+    { name: "avatar", maxCount: 1, optional: true },
+    { name: "backgroundImage", maxCount: 1, optional: true },
+  ]),
   handlerUpdateCharacter
 );
 

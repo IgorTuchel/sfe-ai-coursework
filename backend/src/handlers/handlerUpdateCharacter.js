@@ -17,10 +17,10 @@ export async function handlerUpdateCharacter(req, res) {
     firstMessage,
     isPublic,
     jsonScript,
+    theme,
   } = req.body;
 
   const characterID = req.params.id;
-  let avatarUrl = null;
 
   const dbCharacter = await Character.findById(characterID);
   if (!dbCharacter) {
@@ -29,22 +29,78 @@ export async function handlerUpdateCharacter(req, res) {
 
   let parsedJsonScript = undefined;
   if (jsonScript) {
-    console.log("Parsing JSON script:", jsonScript);
-    if (typeof jsonScript === "string") {
-      try {
-        parsedJsonScript = JSON.parse(jsonScript);
-      } catch (err) {
-        throw new BadRequestError("Invalid JSON script format");
-      }
-    } else if (typeof jsonScript === "object") {
-      parsedJsonScript = jsonScript;
-    } else {
+    if (typeof jsonScript !== "string") {
+      throw new BadRequestError("JSON script must be an string");
+    }
+    try {
+      parsedJsonScript = JSON.parse(jsonScript);
+    } catch (err) {
       throw new BadRequestError("Invalid JSON script format");
     }
   }
 
-  if (req.file) {
-    const fileType = await fileTypeFromBuffer(req.file.buffer);
+  let parsedTheme = {
+    backgroundColor: dbCharacter.theme.backgroundColor,
+    fontFamily: dbCharacter.theme.fontFamily,
+    backgroundImageUrl: dbCharacter.theme.backgroundImageUrl,
+    backgroundOverlayOpacity: dbCharacter.theme.backgroundOverlayOpacity,
+    primaryColor: dbCharacter.theme.primaryColor,
+    userMessageColor: dbCharacter.theme.userMessageColor,
+    secondaryColor: dbCharacter.theme.secondaryColor,
+    systemMessageColor: dbCharacter.theme.systemMessageColor,
+    bubbleOpacity: dbCharacter.theme.bubbleOpacity,
+    bubbleBorderRadius: dbCharacter.theme.bubbleBorderRadius,
+    inputBackgroundColor: dbCharacter.theme.inputBackgroundColor,
+    inputTextColor: dbCharacter.theme.inputTextColor,
+    inputBorderColor: dbCharacter.theme.inputBorderColor,
+    sendButtonColor: dbCharacter.theme.sendButtonColor,
+  };
+  if (req.files["backgroundImage"]) {
+    const fileType = await fileTypeFromBuffer(
+      req.files["backgroundImage"][0].buffer
+    );
+    if (!fileType) {
+      throw new BadRequestError("Could not determine file type of the avatar");
+    }
+    if (fileType.mime !== "image/png" && fileType.mime !== "image/jpeg") {
+      throw new BadRequestError(
+        "Only PNG and JPEG files are allowed for background image"
+      );
+    }
+
+    const fileName = `wallpapers/${Date.now()}_${
+      req.files["backgroundImage"][0].originalname
+    }`;
+    const data = await uploadObjectToS3(
+      fileName,
+      req.files["backgroundImage"][0].buffer,
+      fileType.mime
+    );
+
+    if (!data.success) {
+      throw new BadRequestError("Error uploading wallpaper to S3");
+    }
+
+    parsedTheme.backgroundImageUrl = `https://${cfg.s3BucketName}.s3.${cfg.s3Region}.amazonaws.com/${fileName}`;
+  }
+
+  if (theme) {
+    if (typeof theme !== "string") {
+      throw new BadRequestError("Theme must be a string");
+    }
+    try {
+      const themeObj = JSON.parse(theme);
+      for (const key in themeObj) {
+        parsedTheme[key] = themeObj[key];
+      }
+    } catch (err) {
+      throw new BadRequestError("Invalid theme format");
+    }
+  }
+
+  let avatarUrl = null;
+  if (req.files["avatar"]) {
+    const fileType = await fileTypeFromBuffer(req.files["avatar"][0].buffer);
     if (!fileType) {
       throw new BadRequestError("Could not determine file type of the avatar");
     }
@@ -54,10 +110,12 @@ export async function handlerUpdateCharacter(req, res) {
       );
     }
 
-    let fileName = `avatars/${Date.now()}_${req.file.originalname}`;
+    let fileName = `avatars/${Date.now()}_${
+      req.files["avatar"][0].originalname
+    }`;
     const data = await uploadObjectToS3(
       fileName,
-      req.file.buffer,
+      req.files["avatar"][0].buffer,
       fileType.mime
     );
 
@@ -75,6 +133,7 @@ export async function handlerUpdateCharacter(req, res) {
     jsonScript: parsedJsonScript || dbCharacter.jsonScript,
     isPublic: isPublic !== undefined ? isPublic : dbCharacter.isPublic,
     avatarUrl: avatarUrl || dbCharacter.avatarUrl,
+    theme: parsedTheme || dbCharacter.theme,
   };
 
   if (

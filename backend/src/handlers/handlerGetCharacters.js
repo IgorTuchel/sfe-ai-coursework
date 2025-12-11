@@ -16,6 +16,7 @@ export async function handlerGetCharacter(req, res) {
       name: character.name,
       description: character.description,
       avatarUrl: character.avatarUrl,
+      theme: character.theme,
     },
   });
 }
@@ -36,14 +37,14 @@ export async function handlerGetCharacters(req, res) {
 }
 
 export async function handlerGetAllCharacters(req, res) {
-  const characters = await Character.find({});
+  const characters = await Character.find({}).select("-theme -jsonScript");
   return respondWithJson(res, HTTPCodes.OK, { characters: characters });
 }
 
 export async function handlerGetAllCharacterByID(req, res) {
   const characterID = req.params.characterID;
 
-  const character = await Character.findById(characterID);
+  const character = await Character.findById(characterID).select("-jsonScript");
   if (!character) {
     throw new BadRequestError("Character not found.");
   }

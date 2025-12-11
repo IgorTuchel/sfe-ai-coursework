@@ -29,12 +29,7 @@ export default function HomePage() {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <div
-        className={`flex flex-col w-screen md:w-72 ${
-          isOpen ? "block" : "hidden"
-        }`}>
-        <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
-      </div>
+      <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
       <div className="flex flex-col w-full">
         <Navbar isOpen={isOpen} setIsOpen={setIsOpen} />
         <div className="flex-1 overflow-hidden my-2">
