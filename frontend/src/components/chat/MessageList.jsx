@@ -1,6 +1,5 @@
 import { useRef, useEffect } from "react";
-import MessageSenderSystem from "../MessageSenderSystem";
-import MessageSenderUser from "../MessageSenderUser";
+import Message from "../Message"; // ← New unified component
 
 export default function MessageList({ messages, character, theme, isLoading }) {
   const messagesEndRef = useRef(null);
@@ -23,27 +22,16 @@ export default function MessageList({ messages, character, theme, isLoading }) {
     <div className="w-full space-y-4 py-4">
       {messages &&
         character &&
-        messages.map((msg, index) => {
-          if (msg.role === "system") {
-            return (
-              <MessageSenderSystem
-                key={index}
-                message={msg.content}
-                timestamp={msg.timestamp}
-                character={character}
-              />
-            );
-          } else if (msg.role === "user") {
-            return (
-              <MessageSenderUser
-                key={index}
-                message={msg.content}
-                timestamp={msg.timestamp}
-              />
-            );
-          }
-          return null;
-        })}
+        messages.map((msg, index) => (
+          <Message
+            key={index}
+            role={msg.role}
+            content={msg.content}
+            timestamp={msg.timestamp}
+            character={character}
+            theme={theme}
+          />
+        ))}
 
       {isLoading && character && (
         <div className="flex gap-3 w-full animate-pulse">
@@ -64,7 +52,7 @@ export default function MessageList({ messages, character, theme, isLoading }) {
                 className="text-xs font-normal ml-2"
                 style={{
                   color: theme?.systemMessageColor
-                    ? `${theme.systemMessageColor}80` // 50% opacity
+                    ? `${theme.systemMessageColor}80`
                     : "rgba(255,255,255,0.5)",
                 }}>
                 Thinking...
