@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   LuArrowLeft,
@@ -8,105 +8,25 @@ import {
   LuSave,
   LuMail,
 } from "react-icons/lu";
-import toast from "react-hot-toast";
 import { AuthContext } from "../context/AuthContext";
-import { updateUserSettings } from "../services/updateUserSettingsService";
+import { useUserSettings } from "../hooks/useUserSettings";
 import MfaModel from "../components/MfaModal";
-import { PasswordRequirements } from "../components/PasswordRequirements";
+import PasswordInput from "../components/forms/PasswordInput.jsx";
+import UsernameInput from "../components/forms/UsernameInput.jsx";
 
 export default function UserSettingsPage() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(AuthContext);
-  const [loading, setLoading] = useState(false);
-  const [showMfaModal, setShowMfaModal] = useState(false);
-  const [validPassword, setValidPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    username: user?.username || "",
-    newPassword: "",
-    confirmPassword: "",
-    mfaEnabled: user?.mfaEnabled || false,
-  });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const submitChanges = async (mfaCode = "") => {
-    setLoading(true);
-
-    if (formData.newPassword) {
-      if (!validPassword) {
-        toast.error("Password must meet all requirements");
-        setLoading(false);
-        return;
-      }
-      if (formData.newPassword !== formData.confirmPassword) {
-        toast.error("New passwords do not match");
-        setLoading(false);
-        return;
-      }
-    }
-
-    const payload = { mfaCode };
-    if (formData.mfaEnabled !== user?.mfaEnabled) payload.mfaEnabled = true;
-    if (formData.username !== user?.username) {
-      if (formData.username.length < 3) {
-        toast.error("Username must be at least 3 characters");
-        setLoading(false);
-        return;
-      }
-      payload.username = formData.username;
-    }
-    if (formData.newPassword) payload.password = formData.newPassword;
-
-    if (!payload.mfaEnabled && !payload.username && !payload.password) {
-      toast.error("No changes to save");
-      setLoading(false);
-      return;
-    }
-
-    const res = await updateUserSettings(payload);
-
-    if (res.mfaRequired) {
-      toast.success("MFA code sent to your email");
-      setShowMfaModal(true);
-      setLoading(false);
-      return;
-    }
-
-    if (res.success) {
-      toast.success("Settings updated successfully!");
-      setUser({
-        ...user,
-        username: res.data.username,
-        mfaEnabled: res.data.mfaEnabled,
-      });
-      setFormData((prev) => ({
-        ...prev,
-        newPassword: "",
-        confirmPassword: "",
-        mfaEnabled: res.data.mfaEnabled,
-      }));
-      setShowMfaModal(false);
-    } else {
-      toast.error(`Error: ${res.error || "Failed to update settings"}`);
-      setFormData((prev) => ({ ...prev, mfaEnabled: user?.mfaEnabled }));
-    }
-    setLoading(false);
-  };
-
-  const handleMfaCancel = () => {
-    setShowMfaModal(false);
-    setLoading(false);
-    setFormData((prev) => ({
-      ...prev,
-      mfaEnabled: user?.mfaEnabled,
-      newPassword: "",
-      confirmPassword: "",
-    }));
-    toast.info("Changes cancelled");
-  };
+  const {
+    formData,
+    loading,
+    showMfaModal,
+    setValidPassword,
+    handleInputChange,
+    submitChanges,
+    handleMfaCancel,
+  } = useUserSettings(user, setUser);
 
   return (
     <>
@@ -185,29 +105,15 @@ export default function UserSettingsPage() {
                     </span>
                   </div>
 
-                  <div>
-                    <label htmlFor="username" className="label">
-                      <span className="label-text font-bold text-base text-white">
-                        Username
-                      </span>
-                    </label>
-                    <input
-                      id="username"
-                      type="text"
-                      name="username"
-                      value={formData.username}
-                      onChange={handleInputChange}
-                      disabled={loading}
-                      required
-                      minLength={3}
-                      aria-required="true"
-                      aria-invalid={
-                        formData.username.length > 0 &&
-                        formData.username.length < 3
-                      }
-                      className="input input-bordered w-full bg-base-600 border-base-600 focus:border-primary text-base-content/90"
-                    />
-                  </div>
+                  <UsernameInput
+                    value={formData.username}
+                    onChange={(val) =>
+                      handleInputChange({
+                        target: { name: "username", value: val },
+                      })
+                    }
+                    disabled={loading}
+                  />
                 </fieldset>
 
                 <hr
@@ -235,10 +141,14 @@ export default function UserSettingsPage() {
                         role="switch"
                         checked={formData.mfaEnabled}
                         onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            mfaEnabled: e.target.checked,
-                          }))
+                          handleInputChange({
+                            target: {
+                              name: "mfaEnabled",
+                              value: e.target.checked,
+                              type: "checkbox",
+                              checked: e.target.checked,
+                            },
+                          })
                         }
                         disabled={loading}
                         aria-checked={formData.mfaEnabled}
@@ -290,68 +200,43 @@ export default function UserSettingsPage() {
                     </span>
                   </div>
 
-                  <div>
-                    <label htmlFor="new-password" className="label">
-                      <span className="label-text font-bold text-base text-white">
-                        New Password
-                      </span>
-                    </label>
-                    <input
-                      id="new-password"
-                      type="password"
-                      name="newPassword"
-                      value={formData.newPassword}
-                      onChange={handleInputChange}
-                      disabled={loading}
-                      placeholder="Enter new password"
-                      autoComplete="new-password"
-                      aria-describedby={
-                        formData.newPassword
-                          ? "password-requirements"
-                          : undefined
-                      }
-                      className="input input-bordered w-full bg-base-600 border-base-600 focus:border-primary text-base-content/90 placeholder:text-base-content/40"
-                    />
-                  </div>
+                  <PasswordInput
+                    value={formData.newPassword}
+                    onChange={(val) =>
+                      handleInputChange({
+                        target: { name: "newPassword", value: val },
+                      })
+                    }
+                    disabled={loading}
+                    label="New Password"
+                    placeholder="Enter new password"
+                    showRequirements
+                    onValidityChange={setValidPassword}
+                    autoComplete="new-password"
+                    aria-label="New Password"
+                  />
 
-                  {formData.newPassword && (
-                    <div id="password-requirements" aria-live="polite">
-                      <PasswordRequirements
-                        password={formData.newPassword}
-                        setValidPassword={setValidPassword}
-                      />
-                    </div>
-                  )}
-
-                  <div>
-                    <label htmlFor="confirm-password" className="label">
-                      <span className="label-text font-bold text-base text-white">
-                        Confirm New Password
-                      </span>
-                    </label>
-                    <input
-                      id="confirm-password"
-                      type="password"
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={handleInputChange}
-                      disabled={loading}
-                      placeholder="Confirm new password"
-                      autoComplete="new-password"
-                      aria-invalid={
-                        formData.confirmPassword &&
-                        formData.newPassword !== formData.confirmPassword
-                      }
-                      className="input input-bordered w-full bg-base-600 border-base-600 focus:border-primary text-base-content/90 placeholder:text-base-content/40"
-                    />
-                  </div>
+                  <PasswordInput
+                    value={formData.confirmPassword}
+                    onChange={(val) =>
+                      handleInputChange({
+                        target: { name: "confirmPassword", value: val },
+                      })
+                    }
+                    disabled={loading}
+                    label="Confirm New Password"
+                    placeholder="Confirm new password"
+                    autoComplete="new-password"
+                    aria-label="Confirm New Password"
+                  />
                 </fieldset>
 
                 <button
                   type="submit"
                   disabled={loading}
                   aria-busy={loading}
-                  className="btn btn-primary btn-lg w-full rounded-xl shadow-lg mt-2 text-base-100 border-0 hover:brightness-110 gap-2">
+                  className="btn btn-primary btn-lg w-full rounded-xl shadow-lg mt-2 text-base-100 border-0 hover:brightness-110 gap-2"
+                  aria-label="Save">
                   {loading ? (
                     <>
                       <span

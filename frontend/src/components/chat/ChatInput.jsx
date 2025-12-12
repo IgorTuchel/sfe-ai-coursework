@@ -34,6 +34,7 @@ export default function ChatInput({ onSend, disabled, theme }) {
             color: theme?.inputTextColor || "#ffffff",
             caretColor: theme?.sendButtonColor || undefined,
           }}
+          aria-label="Chat Message Input"
           placeholder={disabled ? "Waiting for reply..." : "Send a message..."}
           rows={1}
           value={message}
@@ -53,7 +54,7 @@ export default function ChatInput({ onSend, disabled, theme }) {
             borderColor: theme?.inputBorderColor || "rgba(255,255,255,0.1)",
           }}>
           <span
-            className="text-xs font-medium opacity-50"
+            className="text-xs font-medium opacity-70"
             style={{ color: theme?.inputTextColor }}>
             {message.length}/{MAX_LENGTH}
           </span>
@@ -65,7 +66,8 @@ export default function ChatInput({ onSend, disabled, theme }) {
               className="btn btn-circle btn-sm disabled:opacity-50 border-0 transition-transform 
                          bg-(--theme-send) text-(--theme-send-text)
                          hover:opacity-80 hover:scale-105
-                         outline-none focus:ring-2 focus:ring-(--theme-send)">
+                         outline-none focus:ring-2 focus:ring-(--theme-send)"
+              aria-label="Send Message Button">
               <LuSendHorizontal className="w-5 h-5" />
             </button>
           </div>
