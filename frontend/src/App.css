@@ -14,6 +14,22 @@
   --color-error: oklch(63.59% 0.25 28.29);
 }
 
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: oklch(66.89% 0.13 233.91);
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 0 0 8px 0;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
 @theme {
   --color-base-50: oklch(95.37% 0 17.2);
   --color-base-100: oklch(88.5% 0.01 95.11);
