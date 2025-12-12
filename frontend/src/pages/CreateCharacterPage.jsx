@@ -1,17 +1,10 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   LuArrowLeft,
   LuFileText,
   LuMessageSquare,
   LuTrash2,
 } from "react-icons/lu";
-import toast from "react-hot-toast";
-
-import { createCharacter } from "../services/createCharacterService";
-import { getCharacterAdmin } from "../services/getCharacterService";
-import { updateCharacter } from "../services/updateCharacterService";
-import { deleteCharacter as deleteCharacterService } from "../services/deleteCharacterService"; // ADD THIS IMPORT
 import TextAreaField from "../components/characterEditor/TextAreaField";
 import VisibilityToggle from "../components/characterEditor/VisibilityToggle";
 import VectorStoreManager from "../components/VectorStoreManager";
@@ -19,6 +12,7 @@ import AvatarUploadSection from "../components/characterEditor/AvatarUploadSecti
 import SystemPromptField from "../components/characterEditor/SystemPromptField";
 import JsonScriptEditor from "../components/characterEditor/JsonScriptEditor";
 import ThemeEditor from "../components/characterEditor/ThemeEditor";
+import { useCharacterForm } from "../hooks/useCharacterForm";
 
 const DEFAULT_AVATAR =
   "https://bournemouth-uni-software-engineering-coursework.s3.eu-north-1.amazonaws.com/avatars/default-avatar.png";
@@ -42,174 +36,21 @@ const DEFAULT_SCRIPT = [
 
 export default function CharacterFormPage() {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const isEditMode = Boolean(id);
-
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    systemPrompt: "",
-    firstMessage: "",
-    isPublic: false,
-  });
-
-  const [jsonScriptString, setJsonScriptString] = useState(
-    JSON.stringify(DEFAULT_SCRIPT, null, 2)
-  );
-
-  const [avatarPreview, setAvatarPreview] = useState(DEFAULT_AVATAR);
-  const [avatarFile, setAvatarFile] = useState(null);
-
-  const [themeData, setThemeData] = useState(null);
-  const [backgroundImageFile, setBackgroundImageFile] = useState(null);
-
-  const [loading, setLoading] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(isEditMode);
-
-  useEffect(() => {
-    if (isEditMode) {
-      const fetchCharacter = async () => {
-        try {
-          setInitialLoading(true);
-          const data = await getCharacterAdmin(id);
-
-          if (data && data.data) {
-            setFormData({
-              name: data.data.name || "",
-              description: data.data.description || "",
-              systemPrompt: data.data.systemPrompt || "",
-              firstMessage: data.data.firstMessage || "",
-              isPublic: data.data.isPublic || false,
-            });
-
-            if (data.data.jsonScript && Array.isArray(data.data.jsonScript)) {
-              setJsonScriptString(
-                JSON.stringify(data.data.jsonScript, null, 2)
-              );
-            } else {
-              setJsonScriptString(JSON.stringify(DEFAULT_SCRIPT, null, 2));
-            }
-
-            if (data.data.theme) {
-              setThemeData(data.data.theme);
-            }
-
-            if (data.data.avatarUrl) {
-              setAvatarPreview(data.data.avatarUrl);
-            }
-          }
-        } catch (error) {
-          console.error("Load error:", error);
-          toast.error("Failed to load character details.");
-          navigate("/dashboard");
-        } finally {
-          setInitialLoading(false);
-        }
-      };
-      fetchCharacter();
-    } else {
-      setInitialLoading(false);
-    }
-  }, [id, isEditMode, navigate]);
-
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const handleAvatarChange = (file) => {
-    setAvatarPreview(URL.createObjectURL(file));
-    setAvatarFile(file);
-  };
-
-  const handleThemeChange = (updatedTheme, bgFile) => {
-    setThemeData(updatedTheme);
-    setBackgroundImageFile(bgFile);
-  };
-
-  // FIXED: Delete handler
-  const handleDeleteCharacter = async () => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this character? This action cannot be undone."
-    );
-
-    if (!confirmed) return;
-
-    setLoading(true);
-    try {
-      const res = await deleteCharacterService(id);
-      window.location.href = "/dashboard"; // Navigate doesnt work for some reason
-      if (res.success) {
-        toast.success("Character deleted successfully.");
-      } else {
-        toast.error(
-          "Error deleting character: " + (res.error || "Unknown error")
-        );
-      }
-    } catch (error) {
-      console.error("Delete error:", error);
-      toast.error("Failed to delete character");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    if (!jsonScriptString) {
-      toast.error("Please provide a JSON script");
-      setLoading(false);
-      return;
-    }
-
-    let validJsonString = jsonScriptString;
-    try {
-      const parsed = JSON.parse(jsonScriptString);
-      if (!Array.isArray(parsed)) {
-        throw new Error("Json root must be an array []");
-      }
-      validJsonString = JSON.stringify(parsed, null, 2);
-    } catch (err) {
-      toast.error("Invalid JSON Script: " + err.message);
-      setLoading(false);
-      return;
-    }
-
-    const payload = {
-      ...formData,
-      jsonScript: validJsonString,
-      avatar: avatarFile,
-    };
-
-    if (isEditMode && themeData) {
-      payload.theme = JSON.stringify(themeData);
-      if (backgroundImageFile) {
-        payload.backgroundImage = backgroundImageFile;
-      }
-    }
-
-    const res = isEditMode
-      ? await updateCharacter(id, payload)
-      : await createCharacter(payload);
-
-    if (res.success) {
-      toast.success(
-        `Character ${isEditMode ? "updated" : "created"} successfully!`
-      );
-      if (!isEditMode) {
-        navigate("/dashboard/characters/create/" + res.data._id);
-        toast.success("You can now edit the character details further.");
-      }
-    } else {
-      toast.error(`Error: ${res.error}`);
-    }
-    setLoading(false);
-  };
+  const {
+    formData,
+    jsonScriptString,
+    avatarPreview,
+    themeData,
+    loading,
+    initialLoading,
+    isEditMode,
+    handleInputChange,
+    handleAvatarChange,
+    handleThemeChange,
+    setJsonScriptString,
+    handleSubmit,
+    handleDelete,
+  } = useCharacterForm(id);
 
   if (initialLoading) {
     return (
@@ -228,10 +69,9 @@ export default function CharacterFormPage() {
             className="flex items-center gap-2 text-sm text-base-content/70 hover:text-primary transition-colors">
             <LuArrowLeft className="w-6 h-6" /> Back to Admin Dashboard
           </a>
-          {/* MOVED: Delete button to top right */}
           {isEditMode && (
             <button
-              onClick={handleDeleteCharacter}
+              onClick={handleDelete}
               disabled={loading}
               className="btn btn-error btn-sm gap-2"
               aria-label="Delete Character Button">

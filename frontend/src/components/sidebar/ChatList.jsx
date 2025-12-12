@@ -5,7 +5,7 @@ export default function ChatList({ chats }) {
   return (
     <>
       <a
-        href="/history"
+        href="/dashboard/history"
         className="text-xs font-bold mb-3 text-primary justify-between flex items-center"
         aria-label="View all chat history">
         <span>CHAT HISTORY</span>

@@ -13,12 +13,15 @@ import { Toaster } from "react-hot-toast";
 import CreateCharacterPage from "./pages/CreateCharacterPage.jsx";
 import DashboardLandingPage from "./pages/DashboardLandingPage.jsx";
 import UserSettingsPage from "./pages/UserSettings.jsx";
+import LandingPage from "./pages/HomePage.jsx";
+import ChatHistory from "./pages/ChatHistory.jsx";
 function App() {
   return (
     <AuthProvider>
       <NavbarProvider>
         <Toaster />
         <Routes>
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/reset-password" element={<ForgotPasswordPage />} />
@@ -34,10 +37,11 @@ function App() {
               element={<CreateCharacterPage />}
             />
             <Route
-              path="/dashboard/characters/create/:id"
+              path="/dashboard/characters/edit/:id"
               element={<CreateCharacterPage />}
             />
             <Route path="/dashboard/profile" element={<UserSettingsPage />} />
+            <Route path="/dashboard/history" element={<ChatHistory />} />
           </Route>
         </Routes>
       </NavbarProvider>

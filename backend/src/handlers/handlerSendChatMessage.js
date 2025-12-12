@@ -15,6 +15,7 @@ import { callGemini } from "../services/callGemini.js";
 import { getCharacterInformation } from "../services/characterContextManager.js";
 import User from "../models/usersModel.js";
 import { getResponseFromJsonScript } from "../utils/jsonEngine.js";
+import { callGeminiWithImage } from "../services/CallGeminiWithImage.js";
 
 export async function handlerSendChatMessage(req, res) {
   const userID = req.user.id;
@@ -107,7 +108,7 @@ export async function handlerSendChatMessage(req, res) {
     )
     .replace("{USERNAME}", userNameDB.username);
 
-  const aiResponse = await callGemini(systemPrompt, message);
+  const aiResponse = await callGeminiWithImage(systemPrompt, message);
   if (!aiResponse.success) {
     throw new BadRequestError("Error from AI service: " + aiResponse.error);
   }

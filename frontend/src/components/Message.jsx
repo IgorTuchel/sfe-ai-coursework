@@ -1,4 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
+import { parseMessageContent } from "../utils/messageParser";
 
 export default function Message({
   role,
@@ -9,6 +10,8 @@ export default function Message({
 }) {
   const isUser = role === "user";
   const senderName = isUser ? "You" : character.name;
+
+  const messageParts = parseMessageContent(content);
 
   return (
     <article
@@ -49,7 +52,7 @@ export default function Message({
         </header>
 
         <div
-          className={`w-fit sm:max-w-[60%] shadow-sm text-white px-4 py-2 text-sm break-words whitespace-pre-wrap ${
+          className={`flex flex-col gap-2 w-fit sm:max-w-[80%] shadow-sm px-4 py-2 text-sm ${
             isUser ? "rounded-tr-none" : "rounded-tl-none"
           } ${
             !theme[isUser ? "primaryColor" : "secondaryColor"]
@@ -66,12 +69,48 @@ export default function Message({
             borderRadius: theme.bubbleBorderRadius || "0.5rem",
             [isUser ? "borderTopRightRadius" : "borderTopLeftRadius"]: "0px",
             fontFamily: theme.fontFamily || undefined,
-          }}
-          role="text"
-          aria-label="Message content">
-          {content}
+          }}>
+          {/* ✅ Render each part */}
+          {messageParts.map((part, index) => (
+            <MessagePart key={index} part={part} />
+          ))}
         </div>
       </div>
     </article>
   );
+}
+
+function MessagePart({ part }) {
+  if (part.type === "text") {
+    return (
+      <span className="break-words whitespace-pre-wrap">{part.content}</span>
+    );
+  }
+
+  if (part.type === "image") {
+    return (
+      <img
+        src={part.content}
+        alt="Shared image"
+        className="rounded-lg max-w-auto md:max-w-[400px] h-auto"
+        loading="lazy"
+      />
+    );
+  }
+
+  if (part.type === "embed") {
+    return (
+      <iframe
+        src={part.content}
+        width="100%"
+        height="152"
+        frameBorder="0"
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        loading="lazy"
+        className="rounded-lg"
+        title="Embedded content"></iframe>
+    );
+  }
+
+  return null;
 }

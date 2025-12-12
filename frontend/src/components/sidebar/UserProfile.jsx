@@ -30,17 +30,9 @@ export default function UserProfile() {
           role="button"
           className="flex flex-row space-x-3 items-center hover:bg-base-600/50 transition-colors cursor-pointer p-2 rounded-lg w-full"
           aria-label="User profile menu">
-          <div className="avatar">
-            <div className="w-9 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-              <img
-                src="https://img.daisyui.com/images/profile/demo/batperson@192.webp"
-                alt="User avatar"
-              />
-            </div>
-          </div>
           <div className="flex flex-col text-left">
             <span className="font-medium text-sm truncate max-w-[120px]">
-              {user?.username || "Guest"}
+              {user?.username || "Loading..."}
             </span>
             <span className="text-xs text-white/70">
               Member Since{" "}
@@ -67,6 +59,7 @@ export default function UserProfile() {
               User Settings
             </a>
           </li>
+
           <div className="divider my-1" aria-hidden="true"></div>
           <li>
             <button

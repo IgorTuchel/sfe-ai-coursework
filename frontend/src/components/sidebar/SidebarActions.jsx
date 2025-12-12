@@ -12,7 +12,7 @@ export default function SidebarActions() {
       </a>
 
       <a
-        href="/bookmarks"
+        href="/dashboard/history?filter=bookmarked"
         className="btn btn-ghost btn-sm justify-start w-full gap-3 text-base-content/80 hover:bg-base-600/50 border-0"
         aria-label="View bookmarks">
         <LuBookmark className="w-4 h-4" aria-hidden="true" />
