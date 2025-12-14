@@ -1,3 +1,16 @@
+/**
+ * @file passwordStrength.js
+ * @description Simple password strength checker with basic policy rules.
+ * @module utils/passwordStrength
+ */
+
+/**
+ * Evaluates whether a password meets minimum strength requirements.
+ * Checks length, upper/lowercase letters, digits, and special characters.
+ * @function evaulatePassword
+ * @param {string} password - Password to validate.
+ * @returns {{valid: boolean, reason: string}} Result object with validity and human-readable reason.
+ */
 export function evaulatePassword(password) {
   if (password.length < 8) {
     return {

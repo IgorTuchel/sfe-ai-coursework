@@ -36,8 +36,6 @@ export default function Sidebar({ isOpen, setIsOpen }) {
         aria-hidden={!isOpen}
         role="navigation"
         aria-label="Main sidebar navigation">
-        {/* Skip Link - Only visible on keyboard focus */}
-
         <SidebarHeader isOpen={isOpen} setIsOpen={setIsOpen} />
 
         <SidebarActions />
@@ -50,7 +48,8 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           <a href="#user-profile" className="skip-link">
             Skip to User Profile
           </a>
-          <ChatList chats={chats} />
+
+          <ChatList chats={chats} searchQuery={searchQuery} />
         </section>
 
         <UserProfile id="user-profile" />

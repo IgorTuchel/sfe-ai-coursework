@@ -13,10 +13,21 @@ import { useUserSettings } from "../hooks/useUserSettings";
 import MfaModel from "../components/MfaModal";
 import PasswordInput from "../components/forms/PasswordInput.jsx";
 import UsernameInput from "../components/forms/UsernameInput.jsx";
-
+import { useState } from "react";
 export default function UserSettingsPage() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(AuthContext);
+  const [mfaHandler, setMfaHandler] = useState(null);
+
+  const handlerSubmit = (type) => {
+    if (type === "delete") {
+      setMfaHandler(() => (mfaCode) => handleDelete(mfaCode));
+      handleDelete();
+    } else {
+      setMfaHandler(() => (mfaCode) => submitChanges(mfaCode));
+      submitChanges();
+    }
+  };
 
   const {
     formData,
@@ -26,6 +37,8 @@ export default function UserSettingsPage() {
     handleInputChange,
     submitChanges,
     handleMfaCancel,
+    invalidateSessions,
+    handleDelete,
   } = useUserSettings(user, setUser);
 
   return (
@@ -34,7 +47,7 @@ export default function UserSettingsPage() {
         showMfaModal={showMfaModal}
         closeMfaModal={handleMfaCancel}
         loading={loading}
-        onSubmit={submitChanges}
+        onSubmit={mfaHandler}
         hidden={!showMfaModal}
       />
 
@@ -69,7 +82,7 @@ export default function UserSettingsPage() {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  submitChanges("");
+                  handlerSubmit();
                 }}
                 noValidate>
                 {/* Account Information */}
@@ -121,7 +134,6 @@ export default function UserSettingsPage() {
                   aria-hidden="true"
                 />
 
-                {/* Security */}
                 <fieldset className="space-y-4">
                   <legend className="flex items-center gap-2 mb-4 text-xl font-bold text-white">
                     <LuShield
@@ -174,6 +186,27 @@ export default function UserSettingsPage() {
                         </span>
                       </div>
                     </label>
+                    <div className="divider my-4" aria-hidden="true"></div>
+                    <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
+                      <button
+                        type="button"
+                        disabled={loading}
+                        onClick={invalidateSessions}
+                        className="btn btn-error btn-md w-fit rounded-xl mt-2 text-white border-base-600 hover:bg-error-900 gap-2"
+                        aria-label="Invalidate other sessions">
+                        <span>Invalidate Other Sessions</span>
+                      </button>
+                      <button
+                        type="button"
+                        disabled={loading}
+                        onClick={() => {
+                          handlerSubmit("delete");
+                        }}
+                        className="btn btn-error btn-md w-fit rounded-xl mt-2 text-white border-base-600 hover:bg-error-900 gap-2"
+                        aria-label="Delete account">
+                        <span>Delete Account</span>
+                      </button>
+                    </div>
                   </div>
                 </fieldset>
 
@@ -183,7 +216,7 @@ export default function UserSettingsPage() {
                 />
 
                 {/* Change Password */}
-                <fieldset className="space-y-4">
+                <fieldset className="space-y-4 my-4">
                   <legend className="flex items-center gap-2 mb-4 text-xl font-bold text-white">
                     <LuLock
                       className="w-5 h-5 text-primary"

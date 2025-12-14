@@ -24,7 +24,7 @@ export const getCharacterAdmin = async (characterID) => {
   } catch (error) {
     return {
       success: false,
-      error: error.message,
+      error: error.response?.data?.error || error.message,
     };
   }
 };

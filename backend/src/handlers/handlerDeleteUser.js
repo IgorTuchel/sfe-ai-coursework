@@ -3,18 +3,16 @@ import { HTTPCodes, respondWithJson } from "../utils/json.js";
 import {
   BadRequestError,
   NotFoundError,
+  ForbiddenError,
 } from "../middleware/errorMiddleware.js";
 import { handleMFA } from "../middleware/mfaVerificationMiddleware.js";
 
 export async function handlerDeleteUser(req, res) {
   const userID = req.user.id;
-  const mfaCode = req.body.mfaCode;
+  const mfaCode = req?.headers["x-mfa-code"];
+
   if (!userID) {
     throw new BadRequestError("User ID is required.");
-  }
-
-  if (!mfaCode) {
-    throw new BadRequestError("MFA code is required.");
   }
 
   const { success, data } = await handleMFA(mfaCode, userID);
@@ -24,7 +22,7 @@ export async function handlerDeleteUser(req, res) {
     } else if (data.code === HTTPCodes.NOT_FOUND) {
       throw new NotFoundError(data.message);
     } else {
-      throw new BadRequestError(data.message);
+      throw new BadRequestError(data.message804368);
     }
   }
 

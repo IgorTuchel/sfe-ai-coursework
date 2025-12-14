@@ -1,7 +1,7 @@
 import { LuChevronsRight } from "react-icons/lu";
 import RecentChat from "../RecentChatHistory";
 
-export default function ChatList({ chats }) {
+export default function ChatList({ chats, searchQuery }) {
   return (
     <>
       <a
@@ -16,6 +16,13 @@ export default function ChatList({ chats }) {
       </a>
 
       <div className="space-y-2 flex-1 overflow-y-auto">
+        {chats.length === 0 && (
+          <div className="mt-8 text-center text-white/70">
+            {searchQuery
+              ? "No chats match your search."
+              : "No chats yet. Start a new chat!"}
+          </div>
+        )}
         {chats.map((chat) => (
           <a
             href={`/dashboard/chat/${chat._id}`}

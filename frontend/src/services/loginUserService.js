@@ -33,7 +33,7 @@ export const login = async (
     if (res.status !== 200) {
       return {
         success: false,
-        message: res.data.error,
+        message: res?.data.error,
       };
     }
 
@@ -44,7 +44,8 @@ export const login = async (
   } catch (error) {
     return {
       success: false,
-      message: error.response.data.error || "An error occurred during login.",
+      message:
+        error?.response?.data?.error || "An error occurred during login.",
     };
   }
 };

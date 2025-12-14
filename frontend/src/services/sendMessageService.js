@@ -11,7 +11,7 @@ export const sendMessage = async (chatID, message) => {
     return {
       success: false,
       message:
-        error.response.data.error ||
+        error?.response?.data?.error ||
         "An error occurred while sending the message.",
     };
   }

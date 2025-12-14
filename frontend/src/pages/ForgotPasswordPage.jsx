@@ -53,7 +53,7 @@ export default function ForgotPasswordPage() {
 
             <div className="form-control mt-6">
               <button
-                className="btn btn-primary bg-primary rounded-2xl text-primary-100 border-0 w-full text-lg shadow-lg shadow-primary/20"
+                className="btn btn-primary bg-primary rounded-2xl text-base-100 hover:bg-primary-600 border-0 w-full text-lg shadow-lg shadow-primary/20"
                 type="submit"
                 disabled={loading}
                 aria-label="Reset Button">

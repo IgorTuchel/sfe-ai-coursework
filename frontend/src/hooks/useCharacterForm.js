@@ -38,9 +38,7 @@ export function useCharacterForm(characterId) {
     isPublic: false,
   });
 
-  const [jsonScriptString, setJsonScriptString] = useState(
-    JSON.stringify(DEFAULT_SCRIPT, null, 2)
-  );
+  const [jsonScriptString, setJsonScriptString] = useState(null);
 
   const [avatarPreview, setAvatarPreview] = useState(DEFAULT_AVATAR);
   const [avatarFile, setAvatarFile] = useState(null);
@@ -69,8 +67,7 @@ export function useCharacterForm(characterId) {
             firstMessage: data.data.firstMessage || "",
             isPublic: data.data.isPublic || false,
           });
-
-          if (data.data.jsonScript && Array.isArray(data.data.jsonScript)) {
+          if (data.data.jsonScript) {
             setJsonScriptString(JSON.stringify(data.data.jsonScript, null, 2));
           } else {
             setJsonScriptString(JSON.stringify(DEFAULT_SCRIPT, null, 2));
@@ -173,7 +170,7 @@ export function useCharacterForm(characterId) {
         toast.success("You can now edit the character details further.");
       }
     } else {
-      toast.error(`Error: ${res.error}`);
+      toast.error(`Error1: ${res.error}`);
     }
     setLoading(false);
   };

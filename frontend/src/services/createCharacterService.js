@@ -20,7 +20,9 @@ export const createCharacter = async (characterData) => {
   } catch (error) {
     return {
       success: false,
-      error: error.message,
+      error:
+        error.response?.data?.error ||
+        "An error occurred while creating the character.",
     };
   }
 };

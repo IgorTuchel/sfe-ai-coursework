@@ -11,7 +11,9 @@ export const deleteCharacter = async (characterId) => {
   } catch (error) {
     return {
       success: false,
-      error: error.message,
+      error:
+        error.response?.data?.error ||
+        "An error occurred while deleting the character.",
     };
   }
 };

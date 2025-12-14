@@ -11,7 +11,6 @@ import {
 import { mongoSearchQuery } from "../services/mongoSearchQuery.js";
 import { getEmbeddingFromGemini } from "../services/callEmbedingGemini.js";
 import { HTTPCodes, respondWithJson } from "../utils/json.js";
-import { callGemini } from "../services/callGemini.js";
 import { getCharacterInformation } from "../services/characterContextManager.js";
 import User from "../models/usersModel.js";
 import { getResponseFromJsonScript } from "../utils/jsonEngine.js";
@@ -130,7 +129,7 @@ export async function handlerSendChatMessage(req, res) {
     userQuestion: message,
     aiAnswer: aiResponse.data,
   });
-
+  console.log("AI Response:");
   return respondWithJson(res, HTTPCodes.OK, {
     content: aiResponse.data,
     role: "system",

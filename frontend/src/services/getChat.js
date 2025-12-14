@@ -10,7 +10,9 @@ export const getChat = async (chatID) => {
   } catch (error) {
     return {
       success: false,
-      error: error.message,
+      error:
+        error.response?.data?.error ||
+        "An error occurred while fetching the chat.",
     };
   }
 };

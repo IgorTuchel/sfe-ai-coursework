@@ -6,7 +6,6 @@ export function parseMessageContent(content) {
   let lastIndex = 0;
   let match;
 
-  // Find all images
   const allMatches = [];
   while ((match = imageRegex.exec(content)) !== null) {
     allMatches.push({
@@ -17,7 +16,6 @@ export function parseMessageContent(content) {
     });
   }
 
-  // Find all embeds
   while ((match = embedRegex.exec(content)) !== null) {
     allMatches.push({
       type: "embed",
@@ -27,12 +25,9 @@ export function parseMessageContent(content) {
     });
   }
 
-  // Sort by position
   allMatches.sort((a, b) => a.index - b.index);
 
-  // Build parts array
   allMatches.forEach((item) => {
-    // Add text before this match
     if (item.index > lastIndex) {
       const textContent = content.substring(lastIndex, item.index);
       if (textContent.trim()) {
@@ -40,12 +35,10 @@ export function parseMessageContent(content) {
       }
     }
 
-    // Add the match
     parts.push({ type: item.type, content: item.url });
     lastIndex = item.endIndex;
   });
 
-  // Add remaining text
   if (lastIndex < content.length) {
     const textContent = content.substring(lastIndex);
     if (textContent.trim()) {
@@ -53,7 +46,6 @@ export function parseMessageContent(content) {
     }
   }
 
-  // If no matches, return plain text
   if (parts.length === 0) {
     parts.push({ type: "text", content });
   }

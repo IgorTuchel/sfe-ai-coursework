@@ -66,7 +66,7 @@ export async function handleMFA(mfaCode, userID) {
       },
     };
   }
-
+  console.log("Generating new MFA code for user:", userID, mfaCode);
   const { success, _ } = await createVerificationCode(userID, dbUser.email);
   if (!success) {
     return {

@@ -96,7 +96,7 @@ export default function SignupPage() {
 
             <div className="form-control mt-6">
               <button
-                className="btn btn-primary bg-primary rounded-2xl text-primary-100 border-0 w-full text-lg shadow-lg shadow-primary/20"
+                className="btn btn-primary bg-primary rounded-2xl text-base-100 hover:bg-primary-600 border-0 w-full text-lg shadow-lg shadow-primary/20"
                 type="submit"
                 disabled={loading}
                 aria-label="Sign up Button">
@@ -107,9 +107,9 @@ export default function SignupPage() {
 
           <div className="divider divider-primary text-white my-6">OR</div>
 
-          <div className="text-center">
+          <div className="text-center space-x-2">
             <span className="text-base-content/70">
-              Already have an account?{" "}
+              Already have an account?
             </span>
             <Link to="/login" className="link link-primary font-semibold">
               Login

@@ -1,7 +1,12 @@
 import { LuInfo } from "react-icons/lu";
 import TextAreaField from "./TextAreaField";
 
-export default function SystemPromptField({ value, onChange, disabled }) {
+export default function SystemPromptField({
+  value,
+  onChange,
+  disabled,
+  ...props
+}) {
   return (
     <div className="form-control w-full">
       <TextAreaField
@@ -13,6 +18,7 @@ export default function SystemPromptField({ value, onChange, disabled }) {
         disabled={disabled}
         h="h-40"
         className="font-mono text-sm"
+        {...props}
       />
       <div
         className={`alert bg-base-600/50 border border-base-600/50 p-3 rounded-lg flex items-start text-xs sm:text-sm mt-2 ${

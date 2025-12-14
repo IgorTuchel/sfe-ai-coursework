@@ -38,13 +38,21 @@ export async function handlerGetCharacters(req, res) {
 
 export async function handlerGetAllCharacters(req, res) {
   const characters = await Character.find({}).select("-theme -jsonScript");
-  return respondWithJson(res, HTTPCodes.OK, { characters: characters });
+  return respondWithJson(res, HTTPCodes.OK, {
+    characters: characters.map((char) => ({
+      id: char._id,
+      name: char.name,
+      description: char.description,
+      avatarUrl: char.avatarUrl,
+      isPublic: char.isPublic,
+    })),
+  });
 }
 
 export async function handlerGetAllCharacterByID(req, res) {
   const characterID = req.params.characterID;
 
-  const character = await Character.findById(characterID).select("-jsonScript");
+  const character = await Character.findById(characterID).select();
   if (!character) {
     throw new BadRequestError("Character not found.");
   }

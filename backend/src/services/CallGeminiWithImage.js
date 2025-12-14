@@ -20,7 +20,7 @@ export async function callGeminiWithImage(systemPrompt, userMessage) {
   );
 
   let promptToUse = systemPrompt;
-
+  console.log("Might need image:", mightNeedImage);
   if (mightNeedImage) {
     promptToUse = `${systemPrompt}
 ---
@@ -32,9 +32,9 @@ Image generation should only generate images that the personality would realisti
 Include this marker: IMAGE_NEEDED: [detailed description]
 Then continue your natural response. Only use when visuals genuinely help.`;
   }
-
+  console.log("Using prompt:");
   const response = await callGemini(promptToUse, userMessage);
-
+  console.log("Gemini response:");
   if (!response.success) {
     return response;
   }

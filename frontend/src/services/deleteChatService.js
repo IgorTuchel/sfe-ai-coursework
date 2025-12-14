@@ -11,7 +11,7 @@ export const deleteChat = async (chatID) => {
     return {
       success: false,
       message:
-        error.response.data.error ||
+        error?.response?.data?.error ||
         "An error occurred while deleting the chat.",
     };
   }

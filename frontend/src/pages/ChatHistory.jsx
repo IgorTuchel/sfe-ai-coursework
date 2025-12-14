@@ -91,11 +91,8 @@ export default function ChatHistory() {
   return (
     <div className="h-screen flex flex-col overflow-hidden">
       <div className="max-w-5xl mx-auto w-full flex flex-col h-full px-6 py-6">
-        {/* Header - Fixed */}
         <div className="flex-shrink-0">
           <h1 className="text-3xl font-bold mb-6">Chat History</h1>
-
-          {/* Filter Tabs - Fixed */}
           <div className="flex gap-6 mb-6 text-sm">
             <button
               onClick={() => setSearchParams({})}
@@ -122,9 +119,7 @@ export default function ChatHistory() {
           </div>
         </div>
 
-        {/* Scrollable Content Area */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden pr-2 -mr-2">
-          {/* Empty State */}
           {filteredChats.length === 0 && (
             <div className="flex items-center justify-center h-full">
               <div className="text-center py-20">
@@ -137,7 +132,7 @@ export default function ChatHistory() {
                       ? setSearchParams({})
                       : navigate("/dashboard")
                   }
-                  className="btn btn-primary"
+                  className="btn btn-primary text-base-100 rounded-xl shadow-lg border-0 hover:bg-primary-600"
                   aria-label={
                     showBookmarked
                       ? "View all chats"
@@ -149,7 +144,6 @@ export default function ChatHistory() {
             </div>
           )}
 
-          {/* Chat List - Scrollable */}
           {filteredChats.length > 0 && (
             <div className="space-y-2 pb-4">
               {filteredChats.map((chat) => (
@@ -171,7 +165,6 @@ export default function ChatHistory() {
                     !editingId && navigate(`/dashboard/chat/${chat._id}`)
                   }>
                   <div className="flex items-center justify-between gap-4">
-                    {/* Title */}
                     <div className="flex-1 min-w-0">
                       {editingId === chat._id ? (
                         <input
@@ -207,7 +200,6 @@ export default function ChatHistory() {
                       )}
                     </div>
 
-                    {/* Actions */}
                     <div className="flex gap-1 flex-shrink-0">
                       {editingId === chat._id ? (
                         <>

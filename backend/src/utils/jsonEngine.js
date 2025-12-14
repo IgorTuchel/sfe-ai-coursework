@@ -1,3 +1,10 @@
+/**
+ * @file jsonEngine.js
+ * @description Fuzzy matching engine for character JSON scripts.
+ * Chooses the best matching script node for a message based on string similarity and probabilities.
+ * @module utils/jsonEngine
+ */
+
 function lengthSimilarity(str1, str2) {
   if (str1.length < 6 && str2.length < 6) return 1.0;
   const len1 = str1.length;
@@ -48,6 +55,14 @@ function levenshteinDistance(a, b) {
   return prevRow[b.length];
 }
 
+/**
+ * Returns a response object for the best-matching script node in a JSON script.
+ * If no match passes the similarity threshold, returns null.
+ * @function getResponseFromJsonScript
+ * @param {Array<Object>} jsonScript - Array of script nodes with `triggers`, `responses`, and `options`.
+ * @param {string} message - Raw user message to match against triggers.
+ * @returns {{text: string, type: string, options: Array<Object>} | null} Selected response and options, or null if no good match.
+ */
 export function getResponseFromJsonScript(jsonScript, message) {
   const cleanMessage = message
     .toLowerCase()
@@ -62,6 +77,7 @@ export function getResponseFromJsonScript(jsonScript, message) {
   let highSCore = 0;
 
   for (const node of jsonScript) {
+    if (highSCore >= 1.0) break;
     if (!node.triggers || !node.responses) continue;
 
     for (const trigger of node.triggers) {

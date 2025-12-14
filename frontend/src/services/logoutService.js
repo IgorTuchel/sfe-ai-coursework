@@ -11,7 +11,7 @@ export const logout = async () => {
     return {
       success: false,
       message:
-        error.response.data.error || "An error occurred while logging out.",
+        error?.response?.data?.error || "An error occurred while logging out.",
     };
   }
 };

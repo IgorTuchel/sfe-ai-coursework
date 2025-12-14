@@ -1,11 +1,19 @@
 import api from "../lib/api";
 
-export async function updateUserSettings(settings) {
+export const deleteUser = async (mfaCode) => {
   try {
-    const res = await api.put("/users", settings, {
+    console.log("Deleting user with MFA code:", mfaCode);
+    const config = {
       withCredentials: true,
-    });
+    };
 
+    if (mfaCode) {
+      config.headers = {
+        "x-mfa-code": mfaCode,
+      };
+    }
+
+    const res = await api.delete("/users", config);
     if (res.status === 200) {
       return {
         success: true,
@@ -20,7 +28,7 @@ export async function updateUserSettings(settings) {
       return {
         success: false,
         mfaRequired: true,
-        message: error.response.data.error,
+        message: error?.response?.data?.error,
       };
     }
 
@@ -29,4 +37,4 @@ export async function updateUserSettings(settings) {
       error: error.response?.data?.error || "An error occurred during update.",
     };
   }
-}
+};

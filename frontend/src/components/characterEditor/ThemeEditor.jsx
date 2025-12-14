@@ -35,7 +35,6 @@ export default function ThemeEditor({
     initialTheme.backgroundImageUrl || ""
   );
 
-  // Memoize to prevent infinite loops
   const notifyParent = useCallback(() => {
     if (onThemeChange) {
       const changedTheme = {};
@@ -81,7 +80,6 @@ export default function ThemeEditor({
 
         <div className="divider my-0 border-base-600/50"></div>
 
-        {/* Background Settings */}
         <div className="space-y-4">
           <SectionHeader icon={LuImage} title="Background" />
 
@@ -104,7 +102,6 @@ export default function ThemeEditor({
             />
           </div>
 
-          {/* Background Image Upload */}
           <div className="form-control w-full">
             <label className="label">
               <span className="label-text font-semibold text-white text-sm">
@@ -145,7 +142,6 @@ export default function ThemeEditor({
 
         <div className="divider my-0 border-base-600/50"></div>
 
-        {/* Color Scheme */}
         <div className="space-y-4">
           <SectionHeader icon={LuPalette} title="Color Scheme" />
 
@@ -167,7 +163,6 @@ export default function ThemeEditor({
 
         <div className="divider my-0 border-base-600/50"></div>
 
-        {/* Message Bubbles */}
         <div className="space-y-4">
           <SectionHeader icon={LuMessageSquare} title="Message Bubbles" />
 
@@ -202,6 +197,7 @@ export default function ThemeEditor({
               value={theme.bubbleBorderRadius}
               onChange={(val) => handleChange("bubbleBorderRadius", val)}
               placeholder="e.g. 12px, 1rem"
+              aria-label="Bubble Border Radius Input"
               disabled={disabled}
             />
           </div>
@@ -209,7 +205,6 @@ export default function ThemeEditor({
 
         <div className="divider my-0 border-base-600/50"></div>
 
-        {/* Input Area */}
         <div className="space-y-4">
           <SectionHeader icon={LuSend} title="Input Area" />
 
@@ -240,13 +235,13 @@ export default function ThemeEditor({
               value={theme.sendButtonColor}
               onChange={(val) => handleChange("sendButtonColor", val)}
               disabled={disabled}
+              aria-label="Send Button Color Input"
             />
           </div>
         </div>
 
         <div className="divider my-0 border-base-600/50"></div>
 
-        {/* Typography */}
         <div className="space-y-4">
           <SectionHeader icon={LuType} title="Typography" />
 
@@ -256,14 +251,13 @@ export default function ThemeEditor({
             onChange={(val) => handleChange("fontFamily", val)}
             placeholder="e.g. 'Inter', sans-serif"
             disabled={disabled}
+            aria-label="Font Family Input"
           />
         </div>
       </div>
     </div>
   );
 }
-
-// ===== Helper Components =====
 
 const SectionHeader = ({ icon: Icon, title }) => (
   <div className="flex items-center gap-2 text-white">
@@ -284,6 +278,7 @@ const ColorInput = ({ label, value, onChange, disabled }) => (
         type="color"
         value={value || "#000000"}
         onChange={(e) => onChange(e.target.value)}
+        aria-label={`${label} Color Picker`}
         disabled={disabled}
         className={`w-14 h-11 rounded-lg cursor-pointer border-2 border-base-600 ${
           disabled ? "opacity-50 cursor-not-allowed" : ""
@@ -294,6 +289,7 @@ const ColorInput = ({ label, value, onChange, disabled }) => (
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="#000000"
+        aria-label={`${label} Color Input`}
         disabled={disabled}
         className={`input input-bordered flex-1 bg-base-600 border-base-600 focus:border-primary rounded-lg text-base-content/90 placeholder:text-base-content/40 font-mono text-sm ${
           disabled ? "opacity-50" : ""
@@ -303,29 +299,46 @@ const ColorInput = ({ label, value, onChange, disabled }) => (
   </div>
 );
 
-const NumberInput = ({ label, value, onChange, disabled, min, max, step }) => (
+const NumberInput = ({
+  label,
+  value,
+  onChange,
+  disabled,
+  min,
+  max,
+  step,
+  ...props
+}) => (
   <div className="form-control w-full">
     <label className="label">
       <span className="label-text font-semibold text-white text-sm">
         {label}
       </span>
+      <input
+        type="number"
+        min={min}
+        max={max}
+        step={step}
+        {...props}
+        value={value}
+        onChange={(e) => onChange(parseFloat(e.target.value))}
+        disabled={disabled}
+        className={`input input-bordered w-full bg-base-600 border-base-600 focus:border-primary rounded-lg text-base-content/90 ${
+          disabled ? "opacity-50" : ""
+        }`}
+      />
     </label>
-    <input
-      type="number"
-      min={min}
-      max={max}
-      step={step}
-      value={value}
-      onChange={(e) => onChange(parseFloat(e.target.value))}
-      disabled={disabled}
-      className={`input input-bordered w-full bg-base-600 border-base-600 focus:border-primary rounded-lg text-base-content/90 ${
-        disabled ? "opacity-50" : ""
-      }`}
-    />
   </div>
 );
 
-const TextInput = ({ label, value, onChange, placeholder, disabled }) => (
+const TextInput = ({
+  label,
+  value,
+  onChange,
+  placeholder,
+  disabled,
+  ...props
+}) => (
   <div className="form-control w-full">
     <label className="label">
       <span className="label-text font-semibold text-white text-sm">
@@ -338,6 +351,7 @@ const TextInput = ({ label, value, onChange, placeholder, disabled }) => (
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       disabled={disabled}
+      {...props}
       className={`input input-bordered w-full bg-base-600 border-base-600 focus:border-primary rounded-lg text-base-content/90 placeholder:text-base-content/40 ${
         disabled ? "opacity-50" : ""
       }`}

@@ -38,7 +38,7 @@ export default function CharacterCard({ character, onChat, isAdmin }) {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              onChat(character?._id);
+              onChat(character?.id);
             }}
             className="btn btn-xs sm:btn-sm text-base-100 font-bold btn-primary flex-grow flex items-center justify-center gap-1">
             <LuMessageSquare className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -46,7 +46,7 @@ export default function CharacterCard({ character, onChat, isAdmin }) {
           </button>
           {isAdmin && (
             <a
-              href={`/dashboard/characters/edit/${character?._id}`}
+              href={`/dashboard/characters/edit/${character?.id}`}
               onClick={(e) => e.stopPropagation()}
               className="btn btn-xs sm:btn-sm text-base-100 font-bold btn-secondary flex items-center justify-center gap-1 flex-shrink-0">
               <LuPencil className="w-3 h-3 sm:w-4 sm:h-4" />

@@ -3,7 +3,7 @@ import TextAreaField from "./TextAreaField";
 
 export default function JsonScriptEditor({ value, onChange, disabled }) {
   return (
-    <div className="form-control w-full">
+    <div className="w-full">
       <TextAreaField
         icon={LuCode}
         label="Logic Script (JSON)"
@@ -14,6 +14,7 @@ export default function JsonScriptEditor({ value, onChange, disabled }) {
         placeholder=""
         disabled={disabled}
         h="h-80"
+        aria-label="Character JSON Script Editor"
         className="font-mono text-xs leading-5"
       />
       <div className="text-xs text-base-content/50 mt-1 px-1">

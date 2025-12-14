@@ -86,7 +86,7 @@ export default function LandingPage() {
             // Single Dashboard Button for Authenticated Users
             <button
               onClick={() => handleNavigation("/dashboard")}
-              className="btn btn-primary btn-lg w-full max-w-xs gap-2 group"
+              className="btn btn-primary btn-lg w-full max-w-xs gap-2 group bg-primary-700 border-primary-700 hover:bg-primary-800 hover:border-primary-800"
               aria-label="Go to dashboard">
               <LuLayoutDashboard className="w-5 h-5" aria-hidden="true" />
               Go to Dashboard
@@ -113,7 +113,7 @@ export default function LandingPage() {
 
               <button
                 onClick={() => handleNavigation("/login")}
-                className="btn btn-ghost flex-1 border border-base-content/20 hover:border-primary hover:bg-primary/10"
+                className="btn btn-ghost flex-1 border border-base-content/20 hover:border-primary hover:bg-primary/10 "
                 aria-label="Log in to your account">
                 I have an account
               </button>
@@ -122,8 +122,7 @@ export default function LandingPage() {
 
           {/* Fine Print */}
           <p className="text-xs text-center text-base-content/50 max-w-sm">
-            No spam. No clutter. Just you, an AI, and the people who changed the
-            world.
+            Made by Group 10
           </p>
         </div>
       </div>

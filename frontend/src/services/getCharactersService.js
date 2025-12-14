@@ -25,7 +25,9 @@ export const getCharactersAdmin = async () => {
   } catch (error) {
     return {
       success: false,
-      error: error.message,
+      error:
+        error.response?.data?.error ||
+        "An error occurred while fetching characters.",
     };
   }
 };

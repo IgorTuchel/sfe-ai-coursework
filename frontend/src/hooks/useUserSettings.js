@@ -1,6 +1,8 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { updateUserSettings } from "../services/updateUserSettingsService";
+import { invalidateOtherRefreshTokens } from "../services/invalidateOtherSessions";
+import { deleteUser } from "../services/deleteUserService";
 
 export function useUserSettings(user, setUser) {
   const [loading, setLoading] = useState(false);
@@ -16,6 +18,15 @@ export function useUserSettings(user, setUser) {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const invalidateSessions = async () => {
+    const res = await invalidateOtherRefreshTokens();
+    if (res.success) {
+      toast.success(res.message || "Other sessions invalidated.");
+    } else {
+      toast.error(res.message || "Failed to invalidate other sessions.");
+    }
   };
 
   const validateChanges = () => {
@@ -105,6 +116,27 @@ export function useUserSettings(user, setUser) {
     toast.error("Changes cancelled");
   };
 
+  const handleDelete = async (mfaCode = "") => {
+    setLoading(true);
+    const res = await deleteUser(mfaCode);
+    if (res.mfaRequired) {
+      toast.success("MFA code sent to your email");
+      setShowMfaModal(true);
+      setLoading(false);
+      return;
+    }
+
+    if (res.success) {
+      toast.success("Account deleted successfully.");
+      setUser(null);
+      window.location.replace("/");
+    } else {
+      toast.error(`Error: ${res.error || "Failed to delete account"}`);
+    }
+    setLoading(false);
+    return res;
+  };
+
   return {
     formData,
     loading,
@@ -114,5 +146,7 @@ export function useUserSettings(user, setUser) {
     handleInputChange,
     submitChanges,
     handleMfaCancel,
+    invalidateSessions,
+    handleDelete,
   };
 }

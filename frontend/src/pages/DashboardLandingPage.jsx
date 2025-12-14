@@ -8,6 +8,7 @@ import CharacterCard from "../components/CharacterCard";
 import { makeChat } from "../services/makeChatService";
 import { useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 export default function DashboardLandingPage() {
   const [characters, setCharacters] = useState([]);
@@ -44,6 +45,14 @@ export default function DashboardLandingPage() {
         Choose a character below and start a conversation!
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 w-full px-4 max-w-6xl overflow-y-scroll pb-8">
+        {user.role === "admin" && (
+          <a
+            href="/dashboard/characters/create"
+            className="card bg-base-600 h-40 shadow-md rounded-2xl overflow-hidden border-2 border-dashed border-base-500/50 hover:shadow-lg transition-all hover:border-primary/60 flex flex-col items-center justify-center gap-2 hover:bg-base-500/50 hover:shadow-primary/20">
+            <LuShare2 className="w-10 h-10 text-primary opacity-80" />
+            <span className="text-primary font-bold">Create New Character</span>
+          </a>
+        )}
         {characters.map((character) => (
           <CharacterCard
             key={character.id}

@@ -22,7 +22,8 @@ export const signUp = async (username, email, password) => {
   } catch (error) {
     return {
       success: false,
-      message: error.response.data.error || "An error occurred during sign up.",
+      message:
+        error?.response?.data?.error || "An error occurred during sign up.",
     };
   }
 };

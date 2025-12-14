@@ -13,29 +13,12 @@ import SystemPromptField from "../components/characterEditor/SystemPromptField";
 import JsonScriptEditor from "../components/characterEditor/JsonScriptEditor";
 import ThemeEditor from "../components/characterEditor/ThemeEditor";
 import { useCharacterForm } from "../hooks/useCharacterForm";
-
-const DEFAULT_AVATAR =
-  "https://bournemouth-uni-software-engineering-coursework.s3.eu-north-1.amazonaws.com/avatars/default-avatar.png";
-
-const DEFAULT_SCRIPT = [
-  {
-    triggers: ["hi", "hello", "hey", "greetings"],
-    responses: [
-      {
-        text: "Hello! How can I assist you today?",
-        type: "text",
-        probability: 1.0,
-      },
-    ],
-    options: [
-      { text: "how are you", nextNode: "how are you" },
-      { text: "who are you", nextNode: "who are you" },
-    ],
-  },
-];
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 export default function CharacterFormPage() {
   const { id } = useParams();
+  const { user } = useContext(AuthContext);
   const {
     formData,
     jsonScriptString,
@@ -56,6 +39,23 @@ export default function CharacterFormPage() {
     return (
       <div className="w-full h-full flex items-center justify-center text-white">
         <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
+
+  if (user.role !== "admin") {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center text-white px-4">
+        <h2 className="text-2xl font-bold mb-4">Access Denied</h2>
+        <p className="text-center max-w-md">
+          You do not have permission to access this page. Please contact an
+          administrator if you believe this is an error.
+        </p>
+        <a
+          href="/dashboard"
+          className="mt-6 btn btn-primary rounded-xl shadow-lg text-base-100 border-0 hover:bg-primary-600">
+          Back to Dashboard
+        </a>
       </div>
     );
   }
@@ -101,6 +101,7 @@ export default function CharacterFormPage() {
                 name={formData.name}
                 onNameChange={handleInputChange}
                 disabled={loading}
+                aria-label="Character Avatar and Name Section"
                 isEditMode={isEditMode}
               />
 
@@ -112,6 +113,7 @@ export default function CharacterFormPage() {
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}
+                aria-label="Character Description Field"
                 placeholder="A brief overview of the character..."
                 disabled={loading}
                 h="h-24"
@@ -120,6 +122,7 @@ export default function CharacterFormPage() {
               <SystemPromptField
                 value={formData.systemPrompt}
                 onChange={handleInputChange}
+                aria-label="Character System Prompt Field"
                 disabled={loading}
               />
 
@@ -132,12 +135,14 @@ export default function CharacterFormPage() {
                 onChange={handleInputChange}
                 placeholder="Greetings..."
                 disabled={loading}
+                aria-label="Character First Message Field"
                 h="h-24"
               />
 
               <JsonScriptEditor
                 value={jsonScriptString}
                 onChange={(e) => setJsonScriptString(e.target.value)}
+                aria-label="Character Script Editor"
                 disabled={loading}
               />
 

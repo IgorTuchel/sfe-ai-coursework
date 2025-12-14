@@ -11,7 +11,8 @@ export const getChats = async () => {
     return {
       success: false,
       message:
-        error.response.data.error || "An error occurred while fetching chats.",
+        error?.response?.data?.error ||
+        "An error occurred while fetching chats.",
     };
   }
 };
