@@ -1,3 +1,10 @@
+/**
+ * @file deleteCharacterVectorData.js
+ * @description Service for deleting vector data associated with a character.
+ * Sends a DELETE request to the backend API and handles responses and errors.
+ * @module services/deleteCharacterVectorData
+ */
+
 import api from "../lib/api";
 
 export const deleteCharacterVectorData = async (

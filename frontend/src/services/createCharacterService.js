@@ -1,3 +1,10 @@
+/**
+ * @file createCharacterService.js
+ * @description Service for creating a new character.
+ * Handles form data submission, including file uploads, and error handling.
+ * @module services/createCharacterService
+ */
+
 import api from "../lib/api.js";
 
 export const createCharacter = async (characterData) => {

@@ -1,3 +1,10 @@
+/**
+ * @file updateChatService.js
+ * @description Service for updating chat details such as name and bookmark status.
+ * Sends a PUT request to the backend API and handles responses and errors.
+ * @module services/updateChatService
+ */
+
 import api from "../lib/api.js";
 
 export const updateChatService = async (chatID, newName, isBookmarked) => {

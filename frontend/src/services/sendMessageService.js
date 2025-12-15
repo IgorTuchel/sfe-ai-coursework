@@ -1,3 +1,10 @@
+/**
+ * @file sendMessageService.js
+ * @description Service for sending messages in a chat.
+ * Sends a POST request to the backend API and handles responses and errors.
+ * @module services/sendMessageService
+ */
+
 import api from "../lib/api.js";
 
 export const sendMessage = async (chatID, message) => {

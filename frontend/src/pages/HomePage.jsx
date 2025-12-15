@@ -75,7 +75,6 @@ export default function LandingPage() {
 
         <div className="flex flex-col items-center gap-4 w-full max-w-md">
           {isAuthenticated ? (
-            // Single Dashboard Button for Authenticated Users
             <button
               onClick={() => handleNavigation("/dashboard")}
               className="btn btn-primary btn-lg w-full max-w-xs gap-2 group bg-primary-700 border-primary-700 hover:bg-primary-800 hover:border-primary-800"
@@ -88,7 +87,6 @@ export default function LandingPage() {
               />
             </button>
           ) : (
-            // Sign Up / Login Buttons for Unauthenticated Users
             <div className="flex flex-col sm:flex-row gap-3 w-full">
               <button
                 onClick={() => handleNavigation("/signup")}

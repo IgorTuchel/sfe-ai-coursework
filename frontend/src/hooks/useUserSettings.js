@@ -1,9 +1,72 @@
+/**
+ * @file useUserSettings.js
+ * @description Custom React hook for managing user account settings and security operations.
+ * Handles username updates, password changes, MFA toggling, session invalidation, and account deletion
+ * with validation and MFA verification flow.
+ * @module hooks/useUserSettings
+ */
+
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { updateUserSettings } from "../services/updateUserSettingsService";
 import { invalidateOtherRefreshTokens } from "../services/invalidateOtherSessions";
 import { deleteUser } from "../services/deleteUserService";
 
+/**
+ * Custom hook for managing user settings and account operations.
+ *
+ * @param {Object} user - Current user object from context.
+ * @param {string} user.username - Current username.
+ * @param {boolean} user.mfaEnabled - Current MFA status.
+ * @param {Function} setUser - Setter function to update user context.
+ * @returns {Object} Hook state and handlers.
+ * @returns {Object} returns.formData - Form data (username, newPassword, confirmPassword, mfaEnabled).
+ * @returns {boolean} returns.loading - Loading state for operations.
+ * @returns {boolean} returns.showMfaModal - Whether MFA modal should be displayed.
+ * @returns {boolean} returns.validPassword - Password validation status (from external validator).
+ * @returns {Function} returns.setValidPassword - Setter for password validation status.
+ * @returns {Function} returns.handleInputChange - Handler for form input changes.
+ * @returns {Function} returns.submitChanges - Submits settings changes with optional MFA code.
+ * @returns {Function} returns.handleMfaCancel - Cancels MFA flow and reverts changes.
+ * @returns {Function} returns.invalidateSessions - Logs out all other user sessions.
+ * @returns {Function} returns.handleDelete - Deletes user account with MFA verification.
+ *
+ * @description Manages complete user settings workflow:
+ * - **Username changes**: Validates minimum 3 characters
+ * - **Password changes**: Validates password strength and confirmation match
+ * - **MFA toggling**: Requires email verification before enabling/disabling
+ * - **Session management**: Allows invalidating other refresh tokens
+ * - **Account deletion**: Requires MFA code for security
+ * - Handles two-phase MFA flow (request code → verify code)
+ * - Reverts form state on MFA cancellation
+ *
+ * @example
+ * const {
+ *   formData,
+ *   loading,
+ *   showMfaModal,
+ *   handleInputChange,
+ *   submitChanges,
+ *   handleMfaCancel,
+ *   invalidateSessions
+ * } = useUserSettings(user, setUser);
+ *
+ * return (
+ *   <>
+ *     <SettingsForm data={formData} onChange={handleInputChange} onSubmit={submitChanges} />
+ *     {showMfaModal && <MfaModal onSubmit={submitChanges} onCancel={handleMfaCancel} />}
+ *   </>
+ * );
+ *
+ * @example
+ * // Account deletion with MFA
+ * const handleDeleteClick = async () => {
+ *   const result = await handleDelete();
+ *   if (result.mfaRequired) {
+ *     // MFA modal shown automatically
+ *   }
+ * };
+ */
 export function useUserSettings(user, setUser) {
   const [loading, setLoading] = useState(false);
   const [showMfaModal, setShowMfaModal] = useState(false);

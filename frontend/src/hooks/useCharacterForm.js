@@ -1,3 +1,10 @@
+/**
+ * @file useCharacterForm.js
+ * @description Custom React hook for managing character creation and editing forms.
+ * Handles form state, validation, file uploads, and CRUD operations for character management.
+ * @module hooks/useCharacterForm
+ */
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -6,9 +13,17 @@ import { getCharacterAdmin } from "../services/getCharacterService";
 import { updateCharacter } from "../services/updateCharacterService";
 import { deleteCharacter as deleteCharacterService } from "../services/deleteCharacterService";
 
+/**
+ * Default avatar URL for new characters.
+ * @constant {string}
+ */
 const DEFAULT_AVATAR =
   "https://bournemouth-uni-software-engineering-coursework.s3.eu-north-1.amazonaws.com/avatars/default-avatar.png";
 
+/**
+ * Default conversation script template for new characters.
+ * @constant {Array<Object>}
+ */
 const DEFAULT_SCRIPT = [
   {
     triggers: ["hi", "hello", "hey", "greetings"],
@@ -26,6 +41,52 @@ const DEFAULT_SCRIPT = [
   },
 ];
 
+/**
+ * Custom hook for managing character creation and editing forms.
+ *
+ * @param {string} [characterId] - Character ID for edit mode, undefined for create mode.
+ * @returns {Object} Hook state and handlers.
+ * @returns {Object} returns.formData - Character form data (name, description, systemPrompt, firstMessage, isPublic).
+ * @returns {string} returns.jsonScriptString - JSON script as string for editing.
+ * @returns {string} returns.avatarPreview - Current avatar preview URL.
+ * @returns {Object} returns.themeData - Character theme configuration.
+ * @returns {boolean} returns.loading - Form submission loading state.
+ * @returns {boolean} returns.initialLoading - Initial data fetch loading state (edit mode only).
+ * @returns {boolean} returns.isEditMode - Whether the form is in edit mode.
+ * @returns {Function} returns.handleInputChange - Handler for text input changes.
+ * @returns {Function} returns.handleAvatarChange - Handler for avatar file selection.
+ * @returns {Function} returns.handleThemeChange - Handler for theme and background image changes.
+ * @returns {Function} returns.setJsonScriptString - Setter for JSON script string.
+ * @returns {Function} returns.handleSubmit - Form submission handler (create or update).
+ * @returns {Function} returns.handleDelete - Character deletion handler with confirmation.
+ *
+ * @description Manages complete character form lifecycle:
+ * - **Create mode**: Initializes with defaults (DEFAULT_AVATAR, DEFAULT_SCRIPT)
+ * - **Edit mode**: Fetches existing character data and populates form
+ * - Validates JSON script before submission
+ * - Handles file uploads (avatar, background image)
+ * - Provides toast notifications for success/error states
+ * - Redirects after creation to edit mode for further customization
+ *
+ * @example
+ * // Create mode
+ * const {
+ *   formData,
+ *   handleInputChange,
+ *   handleSubmit,
+ *   loading
+ * } = useCharacterForm();
+ *
+ * @example
+ * // Edit mode
+ * const {
+ *   formData,
+ *   initialLoading,
+ *   isEditMode,
+ *   handleSubmit,
+ *   handleDelete
+ * } = useCharacterForm("507f1f77bcf86cd799439011");
+ */
 export function useCharacterForm(characterId) {
   const navigate = useNavigate();
   const isEditMode = Boolean(characterId);

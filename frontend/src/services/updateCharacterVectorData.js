@@ -1,3 +1,10 @@
+/**
+ * @file updateCharacterVectorData.js
+ * @description Service for updating character vector data.
+ * Sends a PUT request to the backend API with new text data for a specific character and vector store.
+ * @module services/updateCharacterVectorData
+ */
+
 import api from "../lib/api";
 
 export const updateCharacterVectorData = async (

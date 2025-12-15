@@ -1,6 +1,5 @@
 import { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
-import { LuUser } from "react-icons/lu";
 import toast from "react-hot-toast";
 import { AuthContext } from "../context/AuthContext";
 import { signUp } from "../services/signUpUserService";

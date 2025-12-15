@@ -1,3 +1,10 @@
+/**
+ * @file userService.js
+ * @description Service for user-related operations such as fetching current user data,
+ * updating user profile, and logging in users with optional MFA support.
+ * @module services/userService
+ */
+
 import api from "../lib/api";
 
 export const getCurrentUser = async () => {

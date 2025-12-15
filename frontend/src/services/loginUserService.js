@@ -1,3 +1,10 @@
+/**
+ * @file loginUserService.js
+ * @description Service for user login with optional MFA support.
+ * Sends a POST request to the backend API and handles responses and errors.
+ * @module services/loginUserService
+ */
+
 import api from "../lib/api";
 
 export const login = async (

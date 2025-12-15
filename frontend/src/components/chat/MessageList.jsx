@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import Message from "../Message"; // ← New unified component
+import Message from "../Message";
 
 export default function MessageList({ messages, character, theme, isLoading }) {
   const messagesEndRef = useRef(null);

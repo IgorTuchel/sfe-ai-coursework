@@ -1,3 +1,10 @@
+/**
+ * @file logoutService.js
+ * @description Service for logging out a user.
+ * Sends a POST request to the backend API and handles responses and errors.
+ * @module services/logoutService
+ */
+
 import api from "../lib/api.js";
 
 export const logout = async () => {

@@ -1,7 +1,6 @@
 export default function ChatBackground({ theme }) {
   return (
     <>
-      {/* Wallpaper */}
       {theme?.backgroundImageUrl && (
         <div
           className="absolute inset-0 z-0 transition-opacity duration-500"
@@ -13,7 +12,6 @@ export default function ChatBackground({ theme }) {
         />
       )}
 
-      {/* Overlay */}
       {theme?.backgroundImageUrl && (
         <div
           className="absolute inset-0 z-0 pointer-events-none"

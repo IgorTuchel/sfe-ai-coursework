@@ -1,3 +1,10 @@
+/**
+ * @file getChat.js
+ * @description Service for retrieving chat details by ID.
+ * Sends a GET request to the backend API and handles responses and errors.
+ * @module services/getChat
+ */
+
 import api from "../lib/api.js";
 
 export const getChat = async (chatID) => {

@@ -1,3 +1,10 @@
+/**
+ * @file AuthContext.jsx
+ * @description Context provider for authentication state management.
+ * Manages user authentication status, user data, and loading state.
+ * @module context/AuthContext
+ */
+
 import { createContext, useState, useEffect } from "react";
 import api from "../lib/api";
 

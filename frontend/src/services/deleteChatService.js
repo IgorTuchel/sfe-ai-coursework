@@ -1,3 +1,10 @@
+/**
+ * @file deleteChatService.js
+ * @description Service for deleting a chat by ID.
+ * Sends a DELETE request to the backend API and handles responses and errors.
+ * @module services/deleteChatService
+ */
+
 import api from "../lib/api.js";
 
 export const deleteChat = async (chatID) => {

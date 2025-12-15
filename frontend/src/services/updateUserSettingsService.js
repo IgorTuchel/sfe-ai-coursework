@@ -1,3 +1,10 @@
+/**
+ * @file updateUserSettingsService.js
+ * @description Service for updating user settings.
+ * Sends a PUT request to the backend API and handles responses and errors, including MFA requirements.
+ * @module services/updateUserSettingsService
+ */
+
 import api from "../lib/api";
 
 export async function updateUserSettings(settings) {

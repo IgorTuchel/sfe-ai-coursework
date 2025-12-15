@@ -1,3 +1,10 @@
+/**
+ * @file sendResetPasswordService.js
+ * @description Service for sending a reset password email.
+ * Sends a POST request to the backend API with the user's email.
+ * @module services/sendResetPasswordService
+ */
+
 import api from "../lib/api";
 
 export const sendResetPassword = async (email) => {

@@ -1,3 +1,10 @@
+/**
+ * @file makeChatService.js
+ * @description Service for creating a new chat with a specified character.
+ * Sends a POST request to the backend API and handles responses and errors.
+ * @module services/makeChatService
+ */
+
 import api from "../lib/api.js";
 
 export const makeChat = async (characterID) => {

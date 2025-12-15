@@ -1,3 +1,11 @@
+/**
+ * @file useVectorStore.js
+ * @description Custom React hook for managing character knowledge base vector embeddings.
+ * Handles CRUD operations for character memory/knowledge with optimistic UI updates
+ * and automatic rollback on failure.
+ * @module hooks/useVectorStore
+ */
+
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { getCharacterVectorData } from "../services/getCharacterVectorData";
@@ -5,6 +13,38 @@ import { createCharacterVectorData } from "../services/createCharacterVectorData
 import { updateCharacterVectorData } from "../services/updateCharacterVectorData";
 import { deleteCharacterVectorData } from "../services/deleteCharacterVectorData";
 
+/**
+ * Custom hook for managing character vector knowledge base.
+ *
+ * @param {string} characterId - The unique identifier of the character.
+ * @returns {Object} Hook state and handlers.
+ * @returns {Array<Object>} returns.vectors - Array of vector data objects (each with _id, text, embedding).
+ * @returns {boolean} returns.loading - Loading state for initial data fetch.
+ * @returns {Function} returns.addVector - Adds a new memory/knowledge entry to the vector store.
+ * @returns {Function} returns.updateVector - Updates an existing vector entry with optimistic UI.
+ * @returns {Function} returns.deleteVector - Deletes a vector entry with optimistic UI and rollback.
+ *
+ * @description Manages character knowledge base with RAG vector embeddings:
+ * - Fetches all vector data on mount when characterId is provided
+ * - **Optimistic updates**: UI updates immediately for update/delete operations
+ * - **Automatic rollback**: Reverts to previous state if backend operation fails
+ * - Toast notifications for all operations (success/error)
+ * - Vector embeddings are generated server-side during creation
+ *
+ * @example
+ * const { vectors, loading, addVector, updateVector, deleteVector } = useVectorStore(characterId);
+ *
+ * if (loading) return <LoadingSpinner />;
+ *
+ * return (
+ *   <VectorList
+ *     vectors={vectors}
+ *     onAdd={(text) => addVector(text)}
+ *     onUpdate={(id, text) => updateVector(id, text)}
+ *     onDelete={(id) => deleteVector(id)}
+ *   />
+ * );
+ */
 export function useVectorStore(characterId) {
   const [vectors, setVectors] = useState([]);
   const [loading, setLoading] = useState(false);

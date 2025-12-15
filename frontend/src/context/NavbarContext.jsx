@@ -1,3 +1,10 @@
+/**
+ * @file NavbarContext.jsx
+ * @description Context provider for managing navbar state.
+ * Includes title, bookmark icon visibility, bookmark status, and chat ID.
+ * @module context/NavbarContext
+ */
+
 import { createContext, useState } from "react";
 
 // ignore:start

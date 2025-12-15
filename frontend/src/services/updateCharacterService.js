@@ -1,3 +1,10 @@
+/**
+ * @file updateCharacterService.js
+ * @description Service for updating character details.
+ * Sends a PUT request to the backend API with character data.
+ * @module services/updateCharacterService
+ */
+
 import api from "../lib/api.js";
 
 export const updateCharacter = async (characterID, characterData) => {

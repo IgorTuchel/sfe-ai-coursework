@@ -6,7 +6,6 @@ import LoginPage from "./pages/LoginPage.jsx";
 import SignupPage from "./pages/SignupPage.jsx";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import ResetPasswordPage from "./pages/ResetPasswordPage.jsx";
-import CharactersPage from "./pages/DashboardLandingPage.jsx";
 import ChatPage from "./pages/ChatPage.jsx";
 import { NavbarProvider } from "./context/NavbarContext.jsx";
 import { Toaster } from "react-hot-toast";

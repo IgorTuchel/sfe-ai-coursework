@@ -1,3 +1,10 @@
+/**
+ * @file invalidateOtherSessions.js
+ * @description Service for invalidating other user sessions by revoking refresh tokens.
+ * Sends a POST request to the backend API and handles responses and errors.
+ * @module services/invalidateOtherSessions
+ */
+
 import api from "../lib/api";
 
 export const invalidateOtherRefreshTokens = async () => {

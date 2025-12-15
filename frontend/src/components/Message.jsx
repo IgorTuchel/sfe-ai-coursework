@@ -70,7 +70,6 @@ export default function Message({
             [isUser ? "borderTopRightRadius" : "borderTopLeftRadius"]: "0px",
             fontFamily: theme.fontFamily || undefined,
           }}>
-          {/* ✅ Render each part */}
           {messageParts.map((part, index) => (
             <MessagePart key={index} part={part} />
           ))}

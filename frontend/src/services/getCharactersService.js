@@ -1,3 +1,10 @@
+/**
+ * @file getCharactersService.js
+ * @description Service for retrieving character lists.
+ * Provides functions for both regular and admin character retrieval with error handling.
+ * @module services/getCharactersService
+ */
+
 import api from "../lib/api.js";
 
 export const getCharacters = async () => {

@@ -1,4 +1,12 @@
+/**
+ * @file getCharacterService.js
+ * @description Service for retrieving character details by ID.
+ * Provides functions for both regular and admin character retrieval with error handling.
+ * @module services/getCharacterService
+ */
+
 import api from "../lib/api.js";
+
 export const getCharacter = async (characterID) => {
   try {
     const res = await api.get(`/characters/${characterID}`);

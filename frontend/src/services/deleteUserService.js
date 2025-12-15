@@ -1,3 +1,10 @@
+/**
+ * @file deleteUserService.js
+ * @description Service for deleting a user account, with optional MFA support.
+ * Sends a DELETE request to the backend API and handles responses and errors.
+ * @module services/deleteUserService
+ */
+
 import api from "../lib/api";
 
 export const deleteUser = async (mfaCode) => {

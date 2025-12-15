@@ -17,7 +17,6 @@ export default function AvatarUploadSection({
 
   return (
     <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
-      {/* Avatar Upload */}
       <label
         htmlFor="avatar-upload"
         className="flex flex-col items-center gap-3 cursor-pointer">

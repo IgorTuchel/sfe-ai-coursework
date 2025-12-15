@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { LuShare, LuShare2 } from "react-icons/lu";
+import { LuShare2 } from "react-icons/lu";
 import {
   getCharacters,
   getCharactersAdmin,
@@ -8,7 +8,6 @@ import CharacterCard from "../components/CharacterCard";
 import { makeChat } from "../services/makeChatService";
 import { useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
-import toast from "react-hot-toast";
 
 export default function DashboardLandingPage() {
   const [characters, setCharacters] = useState([]);

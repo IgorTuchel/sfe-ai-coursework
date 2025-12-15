@@ -1,3 +1,10 @@
+/**
+ * @file resetPasswordService.js
+ * @description Service for resetting user passwords.
+ * Sends a POST request to the backend API with the reset token and new password.
+ * @module services/resetPasswordService
+ */
+
 import api from "../lib/api";
 
 export const resetPassword = async (token, newPassword) => {

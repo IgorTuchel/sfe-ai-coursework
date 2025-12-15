@@ -53,7 +53,6 @@ export default function VectorStoreManager({ characterId }) {
           these snippets to answer relevant questions accurately.
         </p>
 
-        {/* Add new vector */}
         <div className="flex flex-col gap-2 mb-8">
           <div className="flex flex-col sm:flex-row gap-3">
             <input
@@ -89,7 +88,6 @@ export default function VectorStoreManager({ characterId }) {
           </div>
         </div>
 
-        {/* Vectors list */}
         <div className="space-y-3">
           {loading ? (
             <div className="flex justify-center py-8">

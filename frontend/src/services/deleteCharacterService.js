@@ -1,3 +1,10 @@
+/**
+ * @file deleteCharacterService.js
+ * @description Service for deleting a character by ID.
+ * Sends a DELETE request to the backend API and handles responses and errors.
+ * @module services/deleteCharacterService
+ */
+
 import api from "../lib/api";
 
 export const deleteCharacter = async (characterId) => {
