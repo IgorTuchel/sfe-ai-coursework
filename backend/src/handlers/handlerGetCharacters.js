@@ -1,3 +1,11 @@
+/**
+ * @file handlerGetCharacters.js
+ * @description Handlers for retrieving character information.
+ * Includes functions to get public characters, all characters,
+ * and specific character details by ID.
+ * @module handlers/handlerGetCharacters
+ */
+
 import { BadRequestError } from "../middleware/errorMiddleware.js";
 import Character from "../models/characterModel.js";
 import { HTTPCodes, respondWithJson } from "../utils/json.js";

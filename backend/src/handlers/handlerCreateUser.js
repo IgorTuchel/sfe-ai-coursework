@@ -1,3 +1,11 @@
+/**
+ * @file handlerCreateUser.js
+ * @description Handler for creating a new user account.
+ * Validates input, hashes password, saves user to the database,
+ * and generates JWT and refresh tokens.
+ * @module handlers/handlerCreateUser
+ */
+
 import cfg from "../config/config.js";
 import { BadRequestError } from "../middleware/errorMiddleware.js";
 import { makeJWT } from "../middleware/jwtMiddleware.js";

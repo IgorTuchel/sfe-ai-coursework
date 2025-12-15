@@ -1,3 +1,10 @@
+/**
+ * @file handlerGetUser.js
+ * @description Handler for retrieving user information.
+ * Validates user ID and fetches user details from the database.
+ * @module handlers/handlerGetUser
+ */
+
 import Users from "../models/usersModel.js";
 import { HTTPCodes, respondWithJson } from "../utils/json.js";
 import {

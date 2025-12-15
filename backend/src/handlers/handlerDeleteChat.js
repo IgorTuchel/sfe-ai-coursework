@@ -1,3 +1,10 @@
+/**
+ * @file handlerDeleteChat.js
+ * @description Handler for deleting a chat by ID.
+ * Validates chat existence and user permissions before deletion.
+ * @module handlers/handlerDeleteChat
+ */
+
 import Chat from "../models/chatModel.js";
 import {
   BadRequestError,

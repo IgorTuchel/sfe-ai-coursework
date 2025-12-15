@@ -1,3 +1,11 @@
+/**
+ * @file handlerUpdateCharacter.js
+ * @description Handler for updating character information.
+ * Validates input data, handles file uploads for avatar and background image,
+ * updates character details in the database, and invalidates relevant caches.
+ * @module handlers/handlerUpdateCharacter
+ */
+
 import { respondWithJson, HTTPCodes } from "../utils/json.js";
 import {
   BadRequestError,

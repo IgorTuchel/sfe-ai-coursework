@@ -1,3 +1,10 @@
+/**
+ * @file handlerDeleteVectorDataStore.js
+ * @description Handler for deleting a vector data store by ID.
+ * Validates existence and removes it from the database.
+ * @module handlers/handlerDeleteVectorDataStore
+ */
+
 import CharacterVectorStore from "../models/characterVectorDataStore.js";
 import { NotFoundError } from "../middleware/errorMiddleware.js";
 import { HTTPCodes, respondWithJson } from "../utils/json.js";

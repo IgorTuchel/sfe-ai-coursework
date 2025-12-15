@@ -1,3 +1,10 @@
+/**
+ * @file handlerUpdateChat.js
+ * @description Handler for updating chat information.
+ * Validates input data, checks user permissions, and updates chat details in the database.
+ * @module handlers/handlerUpdateChat
+ */
+
 import Chat from "../models/chatModel.js";
 import {
   BadRequestError,

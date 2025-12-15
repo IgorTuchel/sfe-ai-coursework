@@ -1,3 +1,10 @@
+/**
+ * @file handlerUpdateVectoreDataStore.js
+ * @description Handler for updating vector data store for a character.
+ * Validates input data, retrieves embeddings, and updates the vector data store in the database.
+ * @module handlers/handlerUpdateVectorDataStore
+ */
+
 import CharacterVectorStore from "../models/characterVectorDataStore.js";
 import {
   BadRequestError,

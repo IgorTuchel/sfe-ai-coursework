@@ -1,13 +1,16 @@
+/**
+ * @file handlerResetPassword.js
+ * @description Handlers for resetting user passwords and sending reset password emails.
+ * Validates tokens, updates passwords, and initiates password reset processes.
+ * @module handlers/handlerResetPassword
+ */
+
 import {
   makeResetPasswordVerification,
   verifyResetPasswordLink,
 } from "../middleware/resetPasswordVerificationMiddleware.js";
 import Users from "../models/usersModel.js";
-import {
-  HTTPCodes,
-  respondWithErrorJson,
-  respondWithJson,
-} from "../utils/json.js";
+import { HTTPCodes, respondWithJson } from "../utils/json.js";
 import { evaulatePassword } from "../utils/passwordStrength.js";
 import { hashPassword } from "../utils/hashedPass.js";
 import {

@@ -1,3 +1,10 @@
+/**
+ * @file handlerInvalidateOtherSessions.js
+ * @description Handler for invalidating other user sessions.
+ * Validates user identity and invalidates all refresh tokens except the current one.
+ * @module handlers/handlerInvalidateOtherSessions
+ */
+
 import { BadRequestError } from "../middleware/errorMiddleware.js";
 import { HTTPCodes, respondWithJson } from "../utils/json.js";
 import { invalidateOtherRefreshTokens } from "../middleware/refreshTokenMiddleware.js";

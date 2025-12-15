@@ -1,3 +1,10 @@
+/**
+ * @file handlerGetChat.js
+ * @description Handlers for retrieving chat information.
+ * Includes functions to get a specific chat by ID and to get all chats for a user.
+ * @module handlers/handlerGetChat
+ */
+
 import { getCharacterInformation } from "../services/characterContextManager.js";
 import Chat from "../models/chatModel.js";
 import {

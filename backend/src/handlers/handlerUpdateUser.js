@@ -1,3 +1,10 @@
+/**
+ * @file handlerUpdateUser.js
+ * @description Handler for updating user information.
+ * Validates input data, handles MFA changes, password updates, and username changes.
+ * @module handlers/handlerUpdateUser
+ */
+
 import { respondWithJson, HTTPCodes } from "../utils/json.js";
 import { evaulatePassword } from "../utils/passwordStrength.js";
 import { hashPassword } from "../utils/hashedPass.js";

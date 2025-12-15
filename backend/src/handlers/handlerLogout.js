@@ -1,3 +1,10 @@
+/**
+ * @file handlerLogout.js
+ * @description Handler for user logout.
+ * Clears authentication cookies and removes refresh token from the database.
+ * @module handlers/handlerLogout
+ */
+
 import RefreshToken from "../models/refreshTokenModel.js";
 import { respondWithJson } from "../utils/json.js";
 

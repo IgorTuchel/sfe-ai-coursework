@@ -1,3 +1,10 @@
+/**
+ * @file handlerLogIn.js
+ * @description Handler for user login with email, password, and optional MFA.
+ * Validates credentials, handles MFA, and issues JWT and refresh tokens.
+ * @module handlers/handlerLogIn
+ */
+
 import { comparePassword } from "../utils/hashedPass.js";
 import Users from "../models/usersModel.js";
 import { HTTPCodes, respondWithJson } from "../utils/json.js";

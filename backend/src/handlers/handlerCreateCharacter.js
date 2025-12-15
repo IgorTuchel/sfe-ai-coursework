@@ -1,3 +1,9 @@
+/**
+ * @file handlerCreateCharacter.js
+ * @description Handler for creating a new character with optional avatar upload to S3.
+ * Validates input, processes avatar file, and saves character to the database.
+ * @module handlers/handlerCreateCharacter
+ */
 import { BadRequestError } from "../middleware/errorMiddleware.js";
 import Character from "../models/characterModel.js";
 import { HTTPCodes, respondWithJson } from "../utils/json.js";

@@ -1,3 +1,11 @@
+/**
+ * @file handlerCreateChat.js
+ * @description Handler for creating a new chat based on a specified character.
+ * Validates character access permissions, initializes chat with a system message,
+ * and stores chat context in Redis for quick retrieval.
+ * @module handlers/handlerCreateChat
+ */
+
 import Character from "../models/characterModel.js";
 import Chat from "../models/chatModel.js";
 import {

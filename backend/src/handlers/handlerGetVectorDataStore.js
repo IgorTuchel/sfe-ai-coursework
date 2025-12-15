@@ -1,3 +1,10 @@
+/**
+ * @file handlerGetVectorDataStore.js
+ * @description Handler for retrieving vector data store by character ID.
+ * Validates character existence and fetches vector data from the database.
+ * @module handlers/handlerGetVectorDataStore
+ */
+
 import CharacterVectorStore from "../models/characterVectorDataStore.js";
 import { NotFoundError } from "../middleware/errorMiddleware.js";
 import { HTTPCodes, respondWithJson } from "../utils/json.js";

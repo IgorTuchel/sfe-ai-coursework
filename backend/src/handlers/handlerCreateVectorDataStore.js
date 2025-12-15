@@ -1,3 +1,11 @@
+/**
+ * @file handlerCreateVectorDataStore.js
+ * @description Handler for creating vector data stores for a character.
+ * Validates input data, retrieves embeddings from Gemini API,
+ * and saves vector data stores to the database.
+ * @module handlers/handlerCreateVectorDataStore
+ */
+
 import {
   BadRequestError,
   NotFoundError,

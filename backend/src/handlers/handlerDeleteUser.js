@@ -1,3 +1,10 @@
+/**
+ * @file handlerDeleteUser.js
+ * @description Handler for deleting a user account with MFA verification.
+ * Validates MFA code, deletes user from the database, and handles errors.
+ * @module handlers/handlerDeleteUser
+ */
+
 import Users from "../models/usersModel.js";
 import { HTTPCodes, respondWithJson } from "../utils/json.js";
 import {

@@ -1,3 +1,11 @@
+/**
+ * @file handlerSendChatMessage.js
+ * @description Handler for sending chat messages.
+ * Validates message content, retrieves chat and character information,
+ * processes the message through a JSON script or AI service, and updates the chat history.
+ * @module handlers/handlerSendChatMessage
+ */
+
 import { Chat } from "../models/chatModel.js";
 import {
   BadRequestError,
