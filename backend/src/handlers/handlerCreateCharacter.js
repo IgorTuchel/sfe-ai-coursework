@@ -1,4 +1,3 @@
-import multer from "multer";
 import { BadRequestError } from "../middleware/errorMiddleware.js";
 import Character from "../models/characterModel.js";
 import { HTTPCodes, respondWithJson } from "../utils/json.js";
