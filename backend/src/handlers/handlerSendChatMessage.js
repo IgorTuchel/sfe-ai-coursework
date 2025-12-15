@@ -26,7 +26,6 @@ export async function handlerSendChatMessage(req, res) {
   }
 
   if (message.length > 512) {
-    console.log("Message length:", message.length);
     throw new BadRequestError(
       "Message exceeds maximum length of 512 characters."
     );
@@ -129,7 +128,6 @@ export async function handlerSendChatMessage(req, res) {
     userQuestion: message,
     aiAnswer: aiResponse.data,
   });
-  console.log("AI Response:");
   return respondWithJson(res, HTTPCodes.OK, {
     content: aiResponse.data,
     role: "system",

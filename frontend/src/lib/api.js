@@ -49,7 +49,6 @@ api.interceptors.response.use(
         return Promise.reject(refresherror);
       }
     }
-    console.log("Response error not handled by interceptor:", error);
     return Promise.reject(error);
   }
 );

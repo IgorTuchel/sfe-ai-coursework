@@ -92,7 +92,7 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row gap-3 w-full">
               <button
                 onClick={() => handleNavigation("/signup")}
-                className="btn btn-primary flex-1 gap-2 group"
+                className="btn btn-primary flex-1 gap-2 group text-base-100"
                 aria-label="Sign up for History AI">
                 Start now
                 <LuArrowRight

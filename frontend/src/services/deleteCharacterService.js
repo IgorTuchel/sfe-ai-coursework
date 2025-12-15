@@ -3,7 +3,6 @@ import api from "../lib/api";
 export const deleteCharacter = async (characterId) => {
   try {
     const res = await api.delete(`/characters/${characterId}`);
-    console.log("Delete character response:", res);
     return {
       success: true,
       data: res.message,

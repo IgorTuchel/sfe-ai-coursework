@@ -67,7 +67,7 @@ export default function CharacterFormPage() {
           <a
             href="/dashboard"
             className="flex items-center gap-2 text-sm text-base-content/70 hover:text-primary transition-colors">
-            <LuArrowLeft className="w-6 h-6" /> Back to Admin Dashboard
+            <LuArrowLeft className="w-6 h-6" /> Back to Dashboard
           </a>
           {isEditMode && (
             <button

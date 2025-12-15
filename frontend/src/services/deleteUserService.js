@@ -2,7 +2,6 @@ import api from "../lib/api";
 
 export const deleteUser = async (mfaCode) => {
   try {
-    console.log("Deleting user with MFA code:", mfaCode);
     const config = {
       withCredentials: true,
     };

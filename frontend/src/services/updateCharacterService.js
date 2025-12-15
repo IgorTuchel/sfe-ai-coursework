@@ -18,7 +18,6 @@ export const updateCharacter = async (characterID, characterData) => {
       data: res.data.character,
     };
   } catch (error) {
-    console.log("Update character error response:", error.response);
     return {
       success: false,
       error: error.response?.data?.error || error.message,

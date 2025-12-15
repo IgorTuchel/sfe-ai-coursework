@@ -1,6 +1,47 @@
+/**
+ * @file callGeminiWithImage.js
+ * @description Service for generating AI responses with optional image generation capability.
+ * Detects when users request visual content and automatically generates images using Gemini Imagen,
+ * embedding them in the response.
+ * @module services/callGeminiWithImage
+ */
+
 import { callGemini } from "./callGemini.js";
 import { generateImage } from "./callGeminiImage.js";
 
+/**
+ * Generates AI text responses with automatic image generation when visual content is requested.
+ *
+ * @async
+ * @param {string} systemPrompt - System instruction to guide the AI's behavior and response style.
+ * @param {string} userMessage - User's message or query.
+ * @returns {Promise<Object>} Response object with success status and data or error.
+ * @returns {boolean} returns.success - Whether the operation was successful.
+ * @returns {string} [returns.data] - Generated text response, optionally with embedded image URL in [[CONTENT-IMAGE]] tags.
+ * @returns {string} [returns.error] - Error message if the operation failed.
+ *
+ * @description Detects image-related keywords in the user message (show, draw, create, picture, image, photo,
+ * look like, visualize, generate). If detected, augments the system prompt to instruct the AI to use
+ * "IMAGE_NEEDED: [description]" format when appropriate. Automatically generates the requested image
+ * and embeds the URL in the response with [[CONTENT-IMAGE]] delimiters.
+ *
+ * @example
+ * const result = await callGeminiWithImage(
+ *   "You are a history expert.",
+ *   "Show me what the Enigma machine looks like"
+ * );
+ * if (result.success) {
+ *   // Response includes: "Here's the Enigma machine.\n\n[[CONTENT-IMAGE]]https://...[[CONTENT-IMAGE]]"
+ *   console.log(result.data);
+ * }
+ *
+ * @example
+ * const result = await callGeminiWithImage(
+ *   "You are a helpful assistant.",
+ *   "What is the capital of France?"
+ * );
+ * // No image keywords detected, returns standard text response
+ */
 export async function callGeminiWithImage(systemPrompt, userMessage) {
   const lowerMessage = userMessage.toLowerCase();
 
@@ -20,7 +61,6 @@ export async function callGeminiWithImage(systemPrompt, userMessage) {
   );
 
   let promptToUse = systemPrompt;
-  console.log("Might need image:", mightNeedImage);
   if (mightNeedImage) {
     promptToUse = `${systemPrompt}
 
@@ -47,9 +87,7 @@ Do NOT refuse image requests by saying you cannot provide visuals. This system s
 `;
   }
 
-  console.log("Using prompt:");
   const response = await callGemini(promptToUse, userMessage);
-  console.log("Gemini response:");
   if (!response.success) {
     return response;
   }

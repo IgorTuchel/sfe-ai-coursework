@@ -15,6 +15,7 @@ import DashboardLandingPage from "./pages/DashboardLandingPage.jsx";
 import UserSettingsPage from "./pages/UserSettings.jsx";
 import LandingPage from "./pages/HomePage.jsx";
 import ChatHistory from "./pages/ChatHistory.jsx";
+import NotFound from "./pages/NotFound.jsx";
 function App() {
   return (
     <AuthProvider>
@@ -43,6 +44,7 @@ function App() {
             <Route path="/dashboard/profile" element={<UserSettingsPage />} />
             <Route path="/dashboard/history" element={<ChatHistory />} />
           </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </NavbarProvider>
     </AuthProvider>

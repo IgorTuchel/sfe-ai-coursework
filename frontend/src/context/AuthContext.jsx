@@ -16,7 +16,6 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       try {
         const res = await api.get("/users", { withCredentials: true });
-        console.log("Auth check response:", res);
         if (res.status === 200) {
           setIsAuthenticated(true);
           setUser({

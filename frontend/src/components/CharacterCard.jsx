@@ -48,7 +48,7 @@ export default function CharacterCard({ character, onChat, isAdmin }) {
             <a
               href={`/dashboard/characters/edit/${character?.id}`}
               onClick={(e) => e.stopPropagation()}
-              className="btn btn-xs sm:btn-sm text-base-100 font-bold btn-secondary flex items-center justify-center gap-1 flex-shrink-0">
+              className="btn btn-xs sm:btn-sm text-base-100 font-bold btn-primary bg-transparent text-primary hover:bg-primary hover:text-base-100 flex items-center justify-center gap-1 flex-shrink-0">
               <LuPencil className="w-3 h-3 sm:w-4 sm:h-4" />
               Edit
             </a>

@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 export default function DashboardLandingPage() {
   const [characters, setCharacters] = useState([]);
   const { user } = useContext(AuthContext);
+  const [initialLoading, setInitialLoading] = useState(characters.length === 0);
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -24,7 +25,7 @@ export default function DashboardLandingPage() {
       if (data.success) {
         setCharacters(data.data);
       }
-      console.log(data.data);
+      setInitialLoading(false);
     }
     fetchCharacters();
   }, [setCharacters]);
@@ -53,14 +54,20 @@ export default function DashboardLandingPage() {
             <span className="text-primary font-bold">Create New Character</span>
           </a>
         )}
-        {characters.map((character) => (
-          <CharacterCard
-            key={character.id}
-            character={character}
-            onChat={handleChat}
-            isAdmin={user.role === "admin"}
-          />
-        ))}
+        {initialLoading ? (
+          <div className="w-full h-full flex items-center justify-center text-white">
+            <span className="loading loading-spinner loading-lg"></span>
+          </div>
+        ) : (
+          characters.map((character) => (
+            <CharacterCard
+              key={character.id}
+              character={character}
+              onChat={handleChat}
+              isAdmin={user.role === "admin"}
+            />
+          ))
+        )}
       </div>
     </section>
   );

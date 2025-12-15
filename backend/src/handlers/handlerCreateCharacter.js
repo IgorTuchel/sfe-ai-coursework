@@ -20,7 +20,6 @@ export async function handlerCreateCharacter(req, res) {
 
   let parsedJsonScript = undefined;
   if (jsonScript) {
-    console.log("Parsing JSON script:", jsonScript);
     if (typeof jsonScript === "string") {
       try {
         parsedJsonScript = JSON.parse(jsonScript);
