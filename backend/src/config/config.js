@@ -60,6 +60,9 @@ const cfg = {
   rrfScore: getFromEnv("RRF_SCORE"),
   ragMaxRetrieve: getFromEnv("RAG_MAX_RETRIEVE"),
 
+  redisHost: getFromEnv("REDIS_HOST"),
+  redisPort: getFromEnv("REDIS_PORT"),
+
   errorLogFile: await generateErrorLog(),
 };
 

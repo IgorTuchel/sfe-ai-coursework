@@ -15,22 +15,17 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-base-100">
       <div className="max-w-2xl w-full flex flex-col items-center gap-8">
-        {/* Logo Section */}
         <div
           className={`flex flex-col items-center gap-4 transition-opacity duration-300 ${
             isNavigating ? "opacity-0" : "opacity-100"
           }`}>
-          {/* Logo - Replace with your S3 URL later */}
-          <div className="avatar">
-            <div className="w-24 md:w-28 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-              <img
-                src="https://via.placeholder.com/150/4F46E5/FFFFFF?text=HAI"
-                alt="History AI logo"
-              />
-            </div>
+          <div className="w-24 md:w-28 ">
+            <img
+              src="https://bournemouth-uni-software-engineering-coursework.s3.eu-north-1.amazonaws.com/logo-icon.png"
+              alt="History AI logo"
+            />
           </div>
 
-          {/* Brand Name */}
           <div className="flex flex-col items-center gap-2">
             <h2 className="text-sm md:text-base font-bold tracking-[0.3em] uppercase text-base-content">
               History AI
@@ -41,13 +36,11 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Hero Heading */}
         <h1 className="text-2xl md:text-4xl font-bold text-center leading-tight">
-          Turn history into{" "}
-          <span className="text-primary">living conversations</span>
+          Turn history into
+          <span className="text-primary"> living conversations</span>
         </h1>
 
-        {/* Features List */}
         <div className="w-full max-w-md">
           <ul className="space-y-3" role="list">
             <li className="flex items-start gap-3 text-sm md:text-base">
@@ -74,13 +67,12 @@ export default function LandingPage() {
                 aria-hidden="true"
               />
               <span className="text-base-content/80">
-                Built for students, researchers, and curious minds
+                Built for curious minds and tech enthusiasts alike
               </span>
             </li>
           </ul>
         </div>
 
-        {/* CTA Buttons */}
         <div className="flex flex-col items-center gap-4 w-full max-w-md">
           {isAuthenticated ? (
             // Single Dashboard Button for Authenticated Users
@@ -98,7 +90,6 @@ export default function LandingPage() {
           ) : (
             // Sign Up / Login Buttons for Unauthenticated Users
             <div className="flex flex-col sm:flex-row gap-3 w-full">
-              {/* Primary CTA */}
               <button
                 onClick={() => handleNavigation("/signup")}
                 className="btn btn-primary flex-1 gap-2 group"
@@ -109,7 +100,6 @@ export default function LandingPage() {
                   aria-hidden="true"
                 />
               </button>
-              {/* Secondary CTA */}
 
               <button
                 onClick={() => handleNavigation("/login")}
@@ -120,7 +110,6 @@ export default function LandingPage() {
             </div>
           )}
 
-          {/* Fine Print */}
           <p className="text-xs text-center text-base-content/50 max-w-sm">
             Made by Group 10
           </p>

@@ -18,9 +18,8 @@ export default function ChatBackground({ theme }) {
         <div
           className="absolute inset-0 z-0 pointer-events-none"
           style={{
-            backgroundColor: `rgba(0,0,0, ${
-              theme.backgroundOverlayOpacity ?? 0.5
-            })`,
+            backgroundColor: theme.backgroundColor || "transparent",
+            opacity: theme.backgroundOverlayOpacity || 0.5,
             backdropFilter: "blur(1px)",
           }}
         />

@@ -15,7 +15,11 @@ export async function callGemini(systemPrompt, prompt, retryCount = 0) {
     };
   } catch (error) {
     if (retryCount < 3) {
-      return await callGemini(prompt, retryCount + 1);
+      console.warn(
+        `Gemini call failed, retrying... (${retryCount + 1})`,
+        error
+      );
+      return await callGemini(systemPrompt, prompt, retryCount + 1);
     } else {
       return {
         success: false,

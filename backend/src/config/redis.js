@@ -6,6 +6,7 @@
  */
 
 import { createClient } from "redis";
+import cfg from "./config.js";
 
 /**
  * The configured Redis client instance.
@@ -15,7 +16,7 @@ import { createClient } from "redis";
  * @see https://github.com/redis/node-redis
  */
 const redisClient = createClient({
-  url: "redis://localhost:6379",
+  url: "redis://" + cfg.redisHost + ":" + cfg.redisPort,
 });
 
 export default redisClient;

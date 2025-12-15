@@ -44,15 +44,14 @@ export default function MessageList({ messages, character, theme, isLoading }) {
             <div
               className="text-sm font-semibold"
               style={{
-                color:
-                  theme?.systemMessageColor || theme?.primaryColor || undefined,
+                color: theme?.primaryColor || theme?.primaryColor || undefined,
               }}>
               {character.name}
               <span
                 className="text-xs font-normal ml-2"
                 style={{
-                  color: theme?.systemMessageColor
-                    ? `${theme.systemMessageColor}80`
+                  color: theme?.primaryColor
+                    ? `${theme.primaryColor}80`
                     : "rgba(255,255,255,0.5)",
                 }}>
                 Thinking...

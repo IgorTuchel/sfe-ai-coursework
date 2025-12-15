@@ -17,10 +17,10 @@ import Chat from "./chatModel.js";
  * @property {string} fontFamily - Font family for text display.
  * @property {string} backgroundImageUrl - URL for background image.
  * @property {number} backgroundOverlayOpacity - Opacity of background overlay (0-1).
- * @property {string} primaryColor - Primary theme color.
- * @property {string} userMessageColor - Color for user message bubbles.
+ * @property {string} primaryColor - Primary theme color, used for the user bubble color.
+ * @property {string} userMessageColor - Color for user message text inside the bubble, used for the system message bubble.
  * @property {string} secondaryColor - Secondary theme color.
- * @property {string} systemMessageColor - Color for system message bubbles.
+ * @property {string} systemMessageColor - Color for system message text inside the bubble.
  * @property {number} bubbleOpacity - Opacity of message bubbles (0-1).
  * @property {string} bubbleBorderRadius - Border radius for message bubbles.
  * @property {string} inputBackgroundColor - Background color for input field.

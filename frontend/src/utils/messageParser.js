@@ -1,7 +1,7 @@
 export function parseMessageContent(content) {
   const parts = [];
-  const imageRegex = /\[\[CONTENT-IMAGE\]\](.*?)\[\[\/CONTENT-IMAGE\]\]/g;
-  const embedRegex = /\[\[CONTENT-EMBED\]\](.*?)\[\[\/CONTENT-EMBED\]\]/g;
+  const imageRegex = /\[\[CONTENT-IMAGE\]\](.*?)\[\[CONTENT-IMAGE\]\]/g;
+  const embedRegex = /\[\[CONTENT-EMBED\]\](.*?)\[\[CONTENT-EMBED\]\]/g;
 
   let lastIndex = 0;
   let match;

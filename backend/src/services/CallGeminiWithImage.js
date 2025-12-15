@@ -23,15 +23,30 @@ export async function callGeminiWithImage(systemPrompt, userMessage) {
   console.log("Might need image:", mightNeedImage);
   if (mightNeedImage) {
     promptToUse = `${systemPrompt}
+
 ---
-IMAGE GENERATION:
-When users ask to see, show, or visualize something, you can generate images.
-Deny the request if it doesnt fit the personality or guidelines.
-Image generation should be used sparingly and only when it adds significant value to the response.
-Image generation should only generate images that the personality would realistically be able to provide.
-Include this marker: IMAGE_NEEDED: [detailed description]
-Then continue your natural response. Only use when visuals genuinely help.`;
+IMPORTANT CAPABILITY:
+Although you communicate through text, this modern system has the capability to generate visual representations when users ask to "see" or "show" something. 
+
+When a user asks to visualize something related to your work or era (e.g., "show me the Enigma machine"), you should:
+
+1. Use this exact format:
+   IMAGE_NEEDED: [detailed visual description for image generation]
+
+2. Then respond naturally, acknowledging that you're providing a visual
+
+EXAMPLE:
+User: "Can you show me the Enigma machine?"
+
+Your response:
+IMAGE_NEEDED: A detailed color photograph of a WWII-era Enigma encryption machine, showing the keyboard, lampboard, three visible rotors with alphabet markings, and the plugboard with cables. Museum lighting, front-angle view.
+
+Then continue with your response
+
+Do NOT refuse image requests by saying you cannot provide visuals. This system supports it. Only refuse if the request is inappropriate for your character or time period.
+`;
   }
+
   console.log("Using prompt:");
   const response = await callGemini(promptToUse, userMessage);
   console.log("Gemini response:");
@@ -52,7 +67,7 @@ Then continue your natural response. Only use when visuals genuinely help.`;
     if (imageResult.success) {
       return {
         success: true,
-        data: `${cleanedText}\n\n[[CONTENT-IMAGE]${imageResult.imageUrl}[[CONTENT-IMAGE]]`,
+        data: `${cleanedText}\n\n[[CONTENT-IMAGE]]${imageResult.imageUrl}[[CONTENT-IMAGE]]`,
       };
     } else {
       return {

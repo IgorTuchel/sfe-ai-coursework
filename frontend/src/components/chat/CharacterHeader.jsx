@@ -16,7 +16,7 @@ export default function CharacterHeader({ character, theme }) {
         <h2
           className="text-2xl font-bold text-center"
           style={{
-            color: theme?.systemMessageColor || undefined,
+            color: theme?.primaryColor || undefined,
           }}>
           {character.name}
         </h2>
